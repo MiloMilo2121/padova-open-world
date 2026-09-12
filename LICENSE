@@ -1,0 +1,10 @@
+Original project code: copyright the respective contributors. All rights reserved.
+This file records the existing default copyright status; it does not relicense
+contributions or grant additional permissions.
+
+Third-party exceptions retain their own licenses:
+- Vendored Three.js and loaders: see dist/vendor/THREE-LICENSE.txt and file headers.
+- OpenStreetMap-derived map data: ODbL 1.0. Attribution and source are embedded in
+  dist/data/padova.json and displayed in the game.
+- Terrain data: see the existing README and in-game terrain attribution.
+- Imported building models must declare author, source and license individually.

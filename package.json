@@ -3,10 +3,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node tools/serve.mjs",
+    "dev": "vite --host 127.0.0.1",
     "test": "node verify-city.mjs && node verify-terrain.mjs && node verify.mjs",
     "audit:map": "node tools/audit-map.mjs",
     "test:modern": "node verify-modern.mjs",
-    "audit:modern": "node tools/audit-modern.mjs"
+    "audit:modern": "node tools/audit-modern.mjs",
+    "dev:legacy": "node tools/serve.mjs",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test:sim": "node --test tests/*.test.mjs",
+    "lint": "eslint src",
+    "check": "npm run typecheck && npm run lint && npm run test:sim && npm run test:v2 && npm test && npm run test:modern && npm run audit:map && npm run build",
+    "test:v2": "node tools/verify-v2.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.2",
+    "eslint": "^10.10.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "vite": "^8.3.0"
   }
 }

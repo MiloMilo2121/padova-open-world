@@ -3,8 +3,8 @@
 Questa modifica è attiva soltanto nel controller moderno (`game.js`). `Terrain` e
 `makeRoadGraph` mantengono il comportamento precedente per impostazione predefinita;
 il mondo moderno passa rispettivamente `modern: true` e `separateLevels: true`.
-I file della modalità storica/Galileo sono preservati, comprese le correzioni
-arrivate su `main` durante il lavoro. La configurazione di pubblicazione è invariata.
+La modalità storica/Galileo è stata rimossa. La configurazione di pubblicazione
+della build esistente è invariata.
 
 ## Strade, ponti e acqua
 

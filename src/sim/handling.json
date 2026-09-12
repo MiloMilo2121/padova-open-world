@@ -1,0 +1,7 @@
+{
+  "car": {"mass": 1250, "wheelbase": 2.6, "frontWeight": 0.58, "cgHeight": 0.5, "grip": 1.15, "cornerStiffness": 8, "steerAngle": 0.48, "acceleration": 9, "braking": 17, "maxSpeed": 52, "reverseSpeed": 10, "drag": 0.003},
+  "mito": {"mass": 1150, "wheelbase": 2.51, "frontWeight": 0.62, "cgHeight": 0.48, "grip": 1.18, "cornerStiffness": 8, "steerAngle": 0.5, "acceleration": 10, "braking": 18, "maxSpeed": 58, "reverseSpeed": 10, "drag": 0.003},
+  "motorcycle": {"mass": 270, "wheelbase": 1.42, "frontWeight": 0.48, "cgHeight": 0.6, "grip": 1.3, "cornerStiffness": 9, "steerAngle": 0.38, "acceleration": 14, "braking": 19, "maxSpeed": 66, "reverseSpeed": 4, "drag": 0.003},
+  "scooter": {"mass": 190, "wheelbase": 1.3, "frontWeight": 0.46, "cgHeight": 0.55, "grip": 1, "cornerStiffness": 8, "steerAngle": 0.5, "acceleration": 6, "braking": 13, "maxSpeed": 25, "reverseSpeed": 3, "drag": 0.004},
+  "truck": {"mass": 6000, "wheelbase": 4.2, "frontWeight": 0.45, "cgHeight": 1, "grip": 0.85, "cornerStiffness": 7, "steerAngle": 0.4, "acceleration": 4.5, "braking": 11, "maxSpeed": 32, "reverseSpeed": 6, "drag": 0.003}
+}

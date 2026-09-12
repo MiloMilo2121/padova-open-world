@@ -2,7 +2,6 @@ import {auditMap} from './tools/audit-map.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import crypto from 'node:crypto';
 import * as THREE from './dist/vendor/three.module.js';
 import {t,ctx,els} from './verify-stability.mjs';
 import {NPC_VEHICLES,createNPCCar,chooseTrafficStyle,HELICOPTER} from './dist/modern-vehicles.js';
@@ -77,12 +76,11 @@ for(const p of t.terrain.roads.profiles.values()){
  if(ticks<1800)driven.push(p.road.n||p.id);if(driven.length===12)break;
 }
 assert(driven.length>=10);results.drivenBridges=driven;
-// Modern road rendering stays finite, and Padova 1500 remains opt-in to legacy terrain.
+// Modern road rendering stays finite, and legacy terrain remains opt-in.
 const road=[...t.terrain.roads.profiles.values()].find(p=>p.road.n==='Ponte dei Tadi').road,batch=new GeometryBatch();buildModernRoads(batch,road.p.slice(1).map((b,i)=>({a:road.p[i],b,road,w:road.w})),t.terrain);assert(batch.p.length>0&&batch.p.every(Number.isFinite)&&batch.c.every(Number.isFinite));
 const grid={version:1,x0:-100,z0:-100,step:100,width:3,height:3,heights:Array(9).fill(12),waterPlane:[12,0,0]},map={roads:[{p:[[-90,0],[90,0]],w:7,k:'residential'}],water:[],areas:[]};assert.equal(new Terrain(grid,map).modern,false);
 const layeredMap={roads:[{p:[[-90,0],[0,0],[90,0]],w:8,k:'primary',b:true,layer:1},{p:[[0,-90],[0,0],[0,90]],w:7,k:'secondary'}],water:[],areas:[]};
 const layered=new Terrain(grid,layeredMap,{modern:true});assert(layered.height(0,0,18)-layered.height(0,0,12)>4.7,'shared OSM coordinate must preserve the underpass');
 const layeredGraph=makeRoadGraph(layeredMap.roads,{separateLevels:true});assert.equal(layeredGraph.nodes.filter(n=>n.x===0&&n.z===0).length,2,'navigation must not invent a turn between overpass and road below');
-const files=['dist/renaissance-game.js','dist/renaissance.css'];for(const file of files){const expected=JSON.parse(fs.readFileSync('docs/renaissance-baseline.json'))[file];assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),expected);}
 const pieces=cutCorridor([[-5,-5],[5,-5],[5,5],[-5,5]],[[-1,-6],[1,-6],[1,6],[-1,6]]);assert.equal(pieces.length,2);assert(pieces.flat().every(p=>Math.abs(p[0])>=1));
-fs.writeFileSync('docs/modern-test-results.json',JSON.stringify(results,null,2)+'\n');console.log('PASS modern 2026 gameplay controller, whole-map road/bridge audit, traffic/pedestrians/pursuits, E entry/exit on all new cars, helicopters, turbo timer and 1500 guards.');console.log(JSON.stringify(results));
+fs.writeFileSync('docs/modern-test-results.json',JSON.stringify(results,null,2)+'\n');console.log('PASS modern 2026 gameplay controller, whole-map road/bridge audit, traffic/pedestrians/pursuits, E entry/exit on all new cars, helicopters, turbo timer and layered terrain guards.');console.log(JSON.stringify(results));
