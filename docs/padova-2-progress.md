@@ -25,10 +25,11 @@ A hash-manifest test checks every live file. V2 uses `src/`, root `index.html`,
   and some balconies. Static batching, instanced pedestrians, consolidated car
   glass and warm sky/lighting added to V2 only.
 - Map geometry uses a binary decimetre-delta format decoded in a persistent worker.
-  The global road/named-landmark base is 1,292,770 bytes; anonymous buildings are
-  split across 1,122 gzip tiles of 400 m. The initial centre fetch is 1,566,794
-  bytes and 8,960 footprints, compared with 3,712,684 bytes and all 87,881
-  footprints before tiling. Moving and map travel prefetch further tiles.
+  The global road/named-landmark base is 1,292,770 bytes, the solved road-profile
+  cache is 971,788 bytes, and anonymous buildings are split across 1,122 gzip
+  tiles of 400 m. The initial centre fetch is 2,538,582 bytes and 8,960 footprints,
+  compared with 3,712,684 bytes and all 87,881 footprints before streaming. Moving
+  and map travel prefetch further tiles.
 - Fingerprinted Via Monte Cero endpoint correction applied to V2 client/server.
 - Real building source research and Blender/GLB asset queue documented separately.
 - Visible terrain is clamped below nearby surface roads, including overlapping OSM
@@ -44,7 +45,7 @@ A hash-manifest test checks every live file. V2 uses `src/`, root `index.html`,
 
 ## Verification and limits
 
-23 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
+24 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
 render batching, server capacity/input flood bounds, idle-input expiry and live
 isolation, signal/tram batching, tile selection/cache reuse, dynamic collision and
 progressive world streaming. A V2 controller
@@ -72,11 +73,12 @@ not met and that report predates the latest chunk/road optimizations; see
 budgets in `perf-budget.json` are targets, not certified results. CI enforces the
 map download budget; it does not yet enforce a deterministic GPU scene budget.
 
-The isolated Node startup profile now reaches 253 MiB after world indexes and the
+The isolated Node startup profile now reaches 256 MiB after world indexes and the
 first two geometry chunks, versus about 451 MiB after full-map world indexing in
 the comparable pre-tiling profile. This is process-heap evidence, not browser or
-VRAM certification. Global road-surface construction still takes about 3.9 s in
-that harness and is the next startup bottleneck.
+VRAM certification. Precomputed road profiles reduce the road-surface stage from
+about 3.6 s to 1.67 s in that harness, with a maximum 5 mm sample-height drift;
+world indexing remains the next startup bottleneck.
 
 ## Outstanding plan work
 

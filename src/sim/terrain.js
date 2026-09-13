@@ -9,7 +9,7 @@ export function pratoLocal(x,z){const dx=x-PRATO.x,dz=z-PRATO.z,c=Math.cos(PRATO
 // Heights are metres, without vertical exaggeration. Hydrology is a continuous
 // regional approximation; the source map has no surveyed water levels / locks.
 export class Terrain {
-  constructor(grid, map, {modern=false}={}){
+  constructor(grid, map, {modern=false,roadCache=null}={}){
     this.modern=modern;
     if(!grid||grid.version!==1||grid.width<2||grid.height<2||!(grid.step>0)||grid.heights.length!==grid.width*grid.height||!grid.heights.every(Number.isFinite)||grid.waterPlane?.length!==3||!grid.waterPlane.every(Number.isFinite))throw new Error('Invalid terrain data');
     this.grid=grid;this.fountains=[];this.waterIndex=new SpatialIndex(80);this.bridgeIndex=new SpatialIndex(80);
@@ -23,7 +23,7 @@ export class Terrain {
       const lengths=road.p.slice(1).map((p,i)=>Math.hypot(p[0]-road.p[i][0],p[1]-road.p[i][1])),total=lengths.reduce((a,b)=>a+b,0);let offset=0;
       for(let i=1;i<road.p.length;i++){const a=road.p[i-1],b=road.p[i];add(this.bridgeIndex,{a,b,w:road.w,offset,length:lengths[i-1],total},[a,b],road.w/2+2);offset+=lengths[i-1];}
     }
-    this.pratoHeight=this.elevation(PRATO.x,PRATO.z);this.roads=new RoadSurfaces(map,this);
+    this.pratoHeight=this.elevation(PRATO.x,PRATO.z);this.roads=new RoadSurfaces(map,this,roadCache);
   }
   elevation(x,z){const g=this.grid,u=clamp((x-g.x0)/g.step,0,g.width-1),v=clamp((z-g.z0)/g.step,0,g.height-1),i=Math.min(g.width-2,Math.floor(u)),j=Math.min(g.height-2,Math.floor(v)),a=u-i,b=v-j,h=(i,j)=>g.heights[j*g.width+i];return h(i,j)*(1-a)*(1-b)+h(i+1,j)*a*(1-b)+h(i,j+1)*(1-a)*b+h(i+1,j+1)*a*b;}
   waterHeight(x,z){const p=this.grid.waterPlane;return this.waterSample(x,z).level??(p[0]+p[1]*x+p[2]*z-1.8);}

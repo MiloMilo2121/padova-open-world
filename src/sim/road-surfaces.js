@@ -1,4 +1,5 @@
 import {SpatialIndex,nearestOnSegment,clamp} from './core.js';
+import {decodeRoadSurfaceCache,applyRoadSurfaceCache} from './road-surface-cache.js';
 
 export const MAX_GRADE=.085;
 const SAMPLE_SPACING=12,MAX_SMOOTHING_PASSES=16,SMOOTHING_EPSILON=.002;
@@ -8,7 +9,7 @@ class MaxHeap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v
 // A sampled road graph propagates approach ramps ACROSS way boundaries. Crossings
 // without a shared OSM vertex stay separate, so the lower street remains usable.
 export class RoadSurfaces{
- constructor(map,terrain){this.terrain=terrain;this.modern=terrain.modern;this.index=new SpatialIndex(80);this.nodes=[];this.profiles=new Map();this.report={roads:map.roads.length,inferred:[],submergedEnds:[],steep:[],layers:0,culverts:0};const lookup=new Map();
+ constructor(map,terrain,cache=null){this.map=map;this.terrain=terrain;this.modern=terrain.modern;this.index=new SpatialIndex(80);this.nodes=[];this.profiles=new Map();this.report={roads:map.roads.length,inferred:[],submergedEnds:[],steep:[],layers:0,culverts:0};const lookup=new Map();
   const node=(p,shared,road,endpoint)=>{
    const base=()=>terrain.prato(...p)?terrain.pratoHeight+.28:terrain.elevation(...p),create=()=>{const h=base();this.nodes.push({x:p[0],z:p[1],base:h,h,edges:[],degree:0});return this.nodes.length-1;};
    if(!shared)return create();const key=p[0].toFixed(1)+','+p[1].toFixed(1);
@@ -35,6 +36,7 @@ export class RoadSurfaces{
     if(i){const prev=this.nodes[ids[i-1]],d=distance(points[i-1],points[i]);const grade=road.k==='steps'?.65:this.modern?.055:MAX_GRADE;n.edges.push({id:ids[i-1],d,grade});prev.edges.push({id:ids[i],d,grade});const s={a:points[i-1],b:points[i],ia:ids[i-1],ib:ids[i],profile,i:i-1};this.index.add(s,Math.min(s.a[0],s.b[0])-road.w,Math.min(s.a[1],s.b[1])-road.w,Math.max(s.a[0],s.b[0])+road.w,Math.max(s.a[1],s.b[1])+road.w);}
    }
   }
+  if(cache){applyRoadSurfaceCache(this,decodeRoadSurfaceCache(map,cache));for(const n of this.nodes){n.degree=new Set(n.edges.map(e=>e.id)).size;n.edges=undefined;}this.report.cached=true;return;}
   // Depression propagates beyond tunnel way endpoints, creating usable approaches.
   const lower=new MaxHeap();for(const p of this.profiles.values())if(p.tunnel)for(const id of p.ids){const n=this.nodes[id];n.h=Math.min(n.h,n.base-5.4);lower.push({id,h:-n.h});}
   while(lower.a.length){const item=lower.pop(),n=this.nodes[item.id];if(item.h<-n.h-.001)continue;for(const e of n.edges){const q=this.nodes[e.id],h=n.h+e.d*e.grade;if(h<q.h-.001){q.h=h;lower.push({id:e.id,h:-h});}}}

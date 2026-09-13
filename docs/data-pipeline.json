@@ -1,8 +1,10 @@
 {
-  "format": "PDV2 v1 base + 400 m building tiles, gzip transport",
+  "format": "PDV2 v1 base + precomputed road profiles + 400 m building tiles, gzip transport",
   "sourceBytes": 18330287,
   "baseBinaryBytes": 5184978,
   "baseDownloadBytes": 1292770,
+  "roadSurfaceBinaryBytes": 1517896,
+  "roadSurfaceDownloadBytes": 971788,
   "buildingTileBinaryBytes": 9886627,
   "buildingTileDownloadBytes": 2851864,
   "buildingTiles": 1122,
@@ -11,7 +13,7 @@
   "roads": 34539,
   "coordinateResolutionMetres": 0.1,
   "limitations": [
-    "Road topology and road-surface profiles remain global simulation data",
+    "Road topology remains global simulation data",
     "Integrated building geometry and collision records stay resident after first use",
     "Tile payloads still use structured-clone objects rather than zero-copy GPU buffers"
   ]
