@@ -17,7 +17,8 @@ test('every simulation dependency is renderer-free and imports in Node', async (
       assert(match[1].startsWith('.'), `external simulation dependency: ${match[1]}`);
       await inspect(resolve(file, '..', match[1]));
     }
-    await import(pathToFileURL(file));
+    if(file.endsWith('.json')) JSON.parse(source);
+    else await import(pathToFileURL(file));
   }
   for (const name of await readdir(root)) if (/\.(js|ts)$/.test(name)) await inspect(resolve(root, name));
 });

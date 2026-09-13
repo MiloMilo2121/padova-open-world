@@ -1,0 +1,21 @@
+{
+  "durationSeconds": 20.283337999999997,
+  "frames": 93,
+  "frameP99Ms": 916.6999999999971,
+  "maxDrawCalls": 605,
+  "maxTriangles": 802819,
+  "maxGeometries": 670,
+  "maxTextures": 6,
+  "heapBytes": 1608903724,
+  "viewport": [
+    1470,
+    801
+  ],
+  "pixelRatio": 1.25,
+  "limitations": [
+    "One local Chrome flythrough, not a cross-device qualification",
+    "Frame time includes scheduling and is diagnostic; draw calls include renderer passes",
+    "Other repository checks were running on the same machine",
+    "Browser tab visibility changed during the run; frame timing is not a foreground FPS qualification"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "status": "targets-not-yet-qualified",
+  "mapDownloadBytes": 4000000,
+  "sceneDrawCalls": 150,
+  "totalDrawCalls": 300,
+  "heapBytes": 200000000,
+  "vramBytes": 350000000,
+  "frameP99Ms": 16.67,
+  "notes": [
+    "Map payload is checked in CI; rendering requires a completed browser report",
+    "The current flythrough is diagnostic, not a deterministic cross-machine rendering gate",
+    "No claim that the graphics targets have been met"
+  ]
+}

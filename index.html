@@ -14,7 +14,7 @@
   <header class="hud topbar">
     <div class="wordmark">PADOVA<span>OPEN WORLD</span></div>
     <div class="location"><span class="eyebrow">ITALIA / VENETO</span><strong id="location">Piazza delle Erbe</strong></div>
-    <div class="topright"><div id="wanted" aria-label="Wanted level">☆☆☆☆☆</div><div class="money">€ <span id="money">0</span></div><button id="pauseBtn" aria-label="Pause game">Ⅱ</button></div>
+    <div class="topright"><button id="onlineBtn">PLAY WITH FRIENDS</button><span id="networkStatus" role="status">OFFLINE</span><div id="wanted" aria-label="Wanted level">☆☆☆☆☆</div><div class="money">€ <span id="money">0</span></div><button id="pauseBtn" aria-label="Pause game">Ⅱ</button></div>
   </header>
   <section id="intro" class="intro">
     <div class="edition"><span></span> A CITY YOU KNOW. YOUR STREETS.</div>
@@ -44,7 +44,16 @@
   </div>
   <dialog id="menu"><div class="dialog-head"><div><span class="eyebrow">PADOVA / YOUR CITY</span><h2 id="menuTitle">Take a breather.</h2></div><button class="close" id="closeMenu" aria-label="Close menu">×</button></div><div id="menuContent"></div></dialog>
   <dialog id="mapDialog"><div class="dialog-head"><div><span class="eyebrow">CITY MAP</span><h2>Know your way around.</h2></div><button class="close" id="closeMap" aria-label="Close map">×</button></div><div class="map-layout"><div class="fullmap-wrap"><canvas id="fullmap" width="1000" height="1000" aria-label="Full map; click to set waypoint"></canvas></div><div id="mapPlaces"></div></div><div class="map-legend"><span>● You</span><span>◆ Destination</span><span>Click the map to set a waypoint</span></div></dialog>
-  <footer id="credits"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a><a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Terrain: Copernicus EU-DEM / USGS via Mapzen</a><span id="modelCredits"></span><span id="scaleCredit">Real-world scale · stylised reconstruction</span></footer>
+  <dialog id="networkDialog"><form id="networkForm">
+    <div class="dialog-head"><div><span class="eyebrow">PADOVA 2 / FREE ROAM</span><h2>Your friends. Your streets.</h2></div><button type="button" id="closeNetwork" class="close" aria-label="Close multiplayer">×</button></div>
+    <p>Share the same server and room code. Up to 32 drivers, one city. The city keeps moving while your menu is open.</p>
+    <label>Server <input id="serverAddress" type="url" value="ws://127.0.0.1:8787" required spellcheck="false" aria-describedby="serverHelp"></label>
+    <small id="serverHelp">Use the server address shared by your host. Secure sites require wss://.</small>
+    <label>Room code <input id="roomCode" value="PADOVA" pattern="[A-Za-z0-9]{3,12}" minlength="3" maxlength="12" required spellcheck="false"></label>
+    <div class="network-actions"><button type="submit" class="primary">Join free roam →</button><button type="button" id="leaveNetwork">Leave room</button></div>
+    <p id="networkMessage" role="status">Single-player stays available when no server is running.</p>
+  </form></dialog>
+  <footer id="credits"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a><a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Terrain: Copernicus EU-DEM / USGS via Mapzen</a><span id="modelCredits"></span><span id="scaleCredit">Fictional game · not affiliated with the Comune di Padova · no weapons</span></footer>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

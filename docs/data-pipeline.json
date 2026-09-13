@@ -1,0 +1,13 @@
+{
+  "format": "PDV2 v1 geometry arrays + metadata, gzip transport",
+  "sourceBytes": 18330287,
+  "binaryBytes": 15294714,
+  "downloadBytes": 3712684,
+  "buildings": 87881,
+  "roads": 34539,
+  "coordinateResolutionMetres": 0.1,
+  "limitations": [
+    "Full map is still decoded at boot; progressive tile loading is not implemented",
+    "Road and building metadata remain a compact JSON section"
+  ]
+}

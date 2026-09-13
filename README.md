@@ -51,3 +51,19 @@ Real building models can replace named OSM buildings through `node tools/add-bui
 The first car is inspired by the Alfa Romeo MiTo. Motorcycles, scooters and trucks are also drivable and available through V or the HUD. Water triggers a fall and automatic return to a dry road; mapped bridges and Prato’s crossings remain usable. Altitude comes from open Mapzen/Copernicus/USGS terrain data, bundled in `dist/data/terrain.json`; river levels and bridge arches are gameplay approximations.
 
 See [implementation, source credits, reproduction and limitations](docs/mobility-terrain.md). Run `node verify-stability.mjs`, `node verify-terrain.mjs` and `node verify.mjs` for local regression checks.
+
+## Padova 2 development preview
+
+The new client is isolated from the live `dist/` build. With Node 24:
+
+```sh
+npm ci
+npm run dev -- --port 5174 --strictPort
+```
+
+`npm run build` writes **build-v2/**. `npm run dev:legacy` serves the existing game.
+For local multiplayer, start `npm run server` in another terminal and use **Play
+with friends**. See [multiplayer setup](docs/multiplayer.md), the
+[implementation ledger](docs/padova-2-progress.md) and
+[real-building research](docs/building-sources.md). This branch is an unfinished
+preview; it does not replace the current live game.

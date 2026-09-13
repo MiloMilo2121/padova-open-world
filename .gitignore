@@ -2,3 +2,4 @@ node_modules/
 build-v2/
 .context/
 .DS_Store
+assets-v2/data/padova-v2.bin.gz

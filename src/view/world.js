@@ -1,3 +1,5 @@
+import {batchStatic} from './static-batch.js';
+import {ArchitectureDetails} from './architecture.js';
 import {buildModernRoads} from './modern-roads.js';
 import {cityDetails} from './city-details.js';
 import {CollisionWorld} from '../sim/collision-world.js';
@@ -31,7 +33,7 @@ const roofColors=['#995f48','#b07553','#9c694d','#a58166','#7b817a','#b17a58','#
 const col=c=>new THREE.Color(c);
 export class GeometryBatch{
   constructor(){this.p=[];this.c=[];this.uv=[];this.baseY=0;}
-  tri(a,b,c,color,uv=[[0,0],[1,0],[1,1]]){this.p.push(a[0],a[1]+this.baseY,a[2],b[0],b[1]+this.baseY,b[2],c[0],c[1]+this.baseY,c[2]);for(let i=0;i<3;i++){this.c.push(color.r,color.g,color.b);this.uv.push(...uv[i]);}}
+  tri(a,b,c,color,uv=[[0,0],[1,0],[1,1]]){this.p.push(a[0],a[1]+this.baseY,a[2],b[0],b[1]+this.baseY,b[2],c[0],c[1]+this.baseY,c[2]);for(let i=0;i<3;i++){const ao=Math.min(1,.73+Math.max(0,[a,b,c][i][1])*.065);this.c.push(color.r*ao,color.g*ao,color.b*ao);this.uv.push(...uv[i]);}}
   quad(a,b,c,d,color,u=1,v=1){this.tri(a,b,c,color,[[0,0],[u,0],[u,v]]);this.tri(a,c,d,color,[[0,0],[u,v],[0,v]]);}
   mesh(mat){if(!this.p.length)return null;const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(this.p,3));g.setAttribute('color',new THREE.Float32BufferAttribute(this.c,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(this.uv,2));g.computeVertexNormals();g.computeBoundingSphere();return new THREE.Mesh(g,mat);}
 }
@@ -83,6 +85,8 @@ export class CityWorld{
   this.landmarks=makeLandmarks(scene,data);
   if(terrain)for(const o of this.landmarks.children){const b=data.buildings.find(b=>b.n===o.userData.buildingName);o.position.y+=b?b.minY:terrain.elevation(o.position.x,o.position.z);}
 
+  for(const child of [...this.landmarks.children])if(child.isGroup)batchStatic(child);
+  batchStatic(this.landmarks);this.architecture=new ArchitectureDetails(scene,this.collision);
   for(const r of data.roads)for(let i=1;i<r.p.length;i++)this.addSegments(r.p[i-1],r.p[i],r.w,'road',r);
   for(const r of data.water.filter(r=>!r.tunnel&&!(r.layer<0)))for(let i=1;i<r.p.length;i++)this.addSegments(r.p[i-1],r.p[i],r.w,'water',r);
   for(const a of data.areas){const xs=a.p.map(p=>p[0]),zs=a.p.map(p=>p[1]);a.cx=(Math.min(...xs)+Math.max(...xs))/2;a.cz=(Math.min(...zs)+Math.max(...zs))/2;this.chunk(a.cx,a.cz).areas.push(a);}
@@ -128,7 +132,7 @@ export class CityWorld{
   if(trees.length){const trunks=new THREE.InstancedMesh(cylinderGeo,material('#7b7250'),trees.length),tops=new THREE.InstancedMesh(sphereGeo,material('#496e48'),trees.length);const o=new THREE.Object3D();trees.forEach((t,i)=>{o.position.set(t.x,t.s*.4+height(t.x,t.z),t.z);o.scale.set(.38,t.s*.8,.38);o.updateMatrix();trunks.setMatrixAt(i,o.matrix);o.position.y=t.s+height(t.x,t.z);o.scale.set(t.s*.56,t.s*.7,t.s*.56);o.updateMatrix();tops.setMatrixAt(i,o.matrix);});g.add(trunks,tops);}
   this.scene.add(g);this.loaded.set(key,g);
  }
- update(x,z,force=false){this.details?.update(x,z);const i=Math.floor(x/CHUNK),j=Math.floor(z/CHUNK),sig=i+','+j+','+this.radius;if(sig!==this.lastKey||force){this.lastKey=sig;const r=Math.ceil(this.radius/CHUNK),keys=[];for(let a=i-r;a<=i+r;a++)for(let b=j-r;b<=j+r;b++){const key=a+','+b;if(this.chunks.has(key))keys.push({key,d:Math.hypot((a+.5)*CHUNK-x,(b+.5)*CHUNK-z)});}keys.sort((a,b)=>a.d-b.d);this.queue=keys.filter(k=>!this.loaded.has(k.key)).map(k=>k.key);for(const [key,g] of this.loaded){const ch=this.chunks.get(key);g.visible=Math.abs(ch.i-i)<=r&&Math.abs(ch.j-j)<=r;if(Math.abs(ch.i-i)>r+2||Math.abs(ch.j-j)>r+2){this.scene.remove(g);g.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh)o.geometry.dispose();if(o.isInstancedMesh)o.dispose();});this.loaded.delete(key);}}}const count=force?12:1;for(let k=0;k<count&&this.queue.length;k++)this.build(this.queue.shift());}
+ update(x,z,force=false){this.details?.update(x,z);this.architecture?.update(x,z);const i=Math.floor(x/CHUNK),j=Math.floor(z/CHUNK),sig=i+','+j+','+this.radius;if(sig!==this.lastKey||force){this.lastKey=sig;const r=Math.ceil(this.radius/CHUNK),keys=[];for(let a=i-r;a<=i+r;a++)for(let b=j-r;b<=j+r;b++){const key=a+','+b;if(this.chunks.has(key))keys.push({key,d:Math.hypot((a+.5)*CHUNK-x,(b+.5)*CHUNK-z)});}keys.sort((a,b)=>a.d-b.d);this.queue=keys.filter(k=>!this.loaded.has(k.key)).map(k=>k.key);for(const [key,g] of this.loaded){const ch=this.chunks.get(key);g.visible=Math.abs(ch.i-i)<=r&&Math.abs(ch.j-j)<=r;if(Math.abs(ch.i-i)>r+2||Math.abs(ch.j-j)>r+2){this.scene.remove(g);g.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh)o.geometry.dispose();if(o.isInstancedMesh)o.dispose();});this.loaded.delete(key);}}}const count=force?12:1;for(let k=0;k<count&&this.queue.length;k++)this.build(this.queue.shift());}
  refreshBuilding(b){const key=Math.floor(b.cx/CHUNK)+','+Math.floor(b.cz/CHUNK),g=this.loaded.get(key);if(!g)return;this.scene.remove(g);g.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh)o.geometry.dispose();if(o.isInstancedMesh)o.dispose();});this.loaded.delete(key);this.build(key);}
  setQuality(q){this.radius=q==='low'?680:q==='high'?1450:1050;this.lastKey='';}
 }
