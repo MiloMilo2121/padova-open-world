@@ -1,3 +1,4 @@
+import {batchStatic} from './static-batch.js';
 import * as THREE from '../../dist/vendor/three.module.js';
 import {dist,angleDiff,clamp} from '../sim/core.js';
 export class TrafficSignals{
@@ -12,7 +13,7 @@ export class TrafficSignals{
 
  phase(id,time,heading){const j=this.junctions.get(id);if(!j)return 'green';const phase=(time+j.offset)%30,axis=Math.abs(Math.sin(heading))>.707?1:0;if(phase<12)return axis===0?'green':'red';if(phase<14)return axis===0?'amber':'red';if(phase<15)return 'red';if(phase<27)return axis===1?'green':'red';if(phase<29)return axis===1?'amber':'red';return 'red';}
  allowed(id,time,heading){return this.phase(id,time,heading)==='green';}
- update(scene,terrain,x,z,time){const key=Math.floor(x/200)+','+Math.floor(z/200);if(key!==this.lastCell){this.lastCell=key;for(const o of this.group.children)o.traverse(m=>{if(m.isMesh){m.geometry.dispose();m.material.dispose();}});this.group.clear();this.visible=[];
+ update(scene,terrain,x,z,time){const key=Math.floor(x/200)+','+Math.floor(z/200);if(key!==this.lastCell){this.lastCell=key;for(const o of this.group.children)o.traverse(m=>{if(m.isMesh){if(m.isInstancedMesh)m.dispose();m.geometry.dispose();m.material.dispose();}});this.group.clear();this.visible=[];
   for(const j of this.junctions.values())if(Math.hypot(j.x-x,j.z-z)<350)for(const approach of j.approaches){
    const {yaw,road}=approach,offset=road.w/2+.65,px=j.x-Math.sin(yaw)*j.radius-Math.cos(yaw)*offset,pz=j.z-Math.cos(yaw)*j.radius+Math.sin(yaw)*offset;
    if(terrain.roads.candidates(px,pz).some(s=>s.road!==road))continue;
@@ -23,8 +24,11 @@ export class TrafficSignals{
     const mx=j.x-Math.sin(yaw)*along+Math.cos(yaw)*lateralMark,mz=j.z-Math.cos(yaw)*along-Math.sin(yaw)*lateralMark;
     const m=new THREE.Mesh(new THREE.PlaneGeometry(i<0?laneWidth:.45,i<0?.25:1.7),new THREE.MeshBasicMaterial({color:'#d9d6c4'}));m.rotation.set(-Math.PI/2,0,-yaw);m.position.set(mx,terrain.roads.sample(road,mx,mz)+.1,mz);this.group.add(m);
    }
-  }if(!this.group.parent)scene.add(this.group);
- }for(const {j,yaw,bulbs} of this.visible){const p=this.phase(j.id,time,yaw);bulbs.forEach((b,i)=>b.material.color.set(i===(p==='red'?0:p==='amber'?1:2)?['#ff4234','#ffc547','#5cff8a'][i]:'#26312c'));}}
+  }
+  this.group.updateMatrixWorld(true);const bulbs=this.visible.flatMap(s=>s.bulbs);this.lightBatch=null;
+  if(bulbs.length){const lights=new THREE.InstancedMesh(new THREE.SphereGeometry(.12,6,4),new THREE.MeshBasicMaterial(),bulbs.length);bulbs.forEach((b,i)=>{lights.setMatrixAt(i,b.matrixWorld);lights.setColorAt(i,b.material.color);b.visible=false;b.userData.lightIndex=i;});lights.instanceMatrix.needsUpdate=true;lights.computeBoundingSphere();this.group.add(lights);this.lightBatch=lights;}
+  batchStatic(this.group,{spatial:false});if(!this.group.parent)scene.add(this.group);
+ }for(const {j,yaw,bulbs} of this.visible){const p=this.phase(j.id,time,yaw);bulbs.forEach((b,i)=>{b.material.color.set(i===(p==='red'?0:p==='amber'?1:2)?['#ff4234','#ffc547','#5cff8a'][i]:'#26312c');this.lightBatch?.setColorAt(b.userData.lightIndex,b.material.color);});}if(this.lightBatch)this.lightBatch.instanceColor.needsUpdate=true;}
 
 }
 export function lanePoint(node,from,road){const yaw=Math.atan2(node.x-from.x,node.z-from.z),offset=(road?.oneway??road?.one)?0:Math.min(1.55,(road?.w||6)/4);return {x:node.x-Math.cos(yaw)*offset,z:node.z+Math.sin(yaw)*offset,yaw};}

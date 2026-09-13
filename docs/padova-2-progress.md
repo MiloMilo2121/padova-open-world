@@ -29,13 +29,23 @@ A hash-manifest test checks every live file. V2 uses `src/`, root `index.html`,
   still loaded; this is not quadtree tile streaming or zero-copy runtime geometry.
 - Fingerprinted Via Monte Cero endpoint correction applied to V2 client/server.
 - Real building source research and Blender/GLB asset queue documented separately.
+- Visible terrain is clamped below nearby surface roads, including overlapping OSM
+  ways at Piazza delle Erbe, and character roots account for the model's actual
+  sole height. Tunnels and raised crossings retain their separate vertical level.
+- City geometry now streams in a circular queue: two immediate chunks, one later
+  chunk per time slice, a 600 m gameplay prefetch band and distant chunk disposal.
+  The 87,881-footprint minimap renders in idle batches after play becomes available.
+- Road meshes cache their centreline samples, use 6 m render sections and create
+  junction fans only at real source vertices. Road-surface nodes keep a stable V8
+  object shape and use bounded smoothing over 12 m samples.
 
 ## Verification and limits
 
-17 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
+20 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
 render batching, server capacity/input flood bounds, idle-input expiry and live
-isolation. A V2 controller harness drives actual map terrain and checks camera
-finiteness/resource disposal. `npm run check` passed: typecheck, lint, simulation/controller tests, legacy
+isolation, signal/tram batching and progressive world streaming. A V2 controller
+harness drives actual map terrain and checks camera finiteness, road/ground
+separation, sole placement and resource disposal. `npm run check` passed: typecheck, lint, simulation/controller tests, legacy
 city/terrain/modern tests, map audit and V2 production build. The added map budget
 test also passed separately.
 
@@ -50,10 +60,11 @@ See `multiplayer-load.json` for the actual run, not a hosting capacity promise.
 Chrome rendered the V2 scene and exposed bugs in gzip handling, startup and the
 online-button layout; these were fixed. The pre-instancing street observation
 was 507 draws / 666k triangles and Chrome reported substantial memory use.
-The subsequent diagnostic flythrough reached 605 draws, 803k triangles and
+The subsequent pre-streaming diagnostic flythrough reached 605 draws, 803k triangles and
 1.61 GB heap. Its 917 ms frame p99 includes tab visibility changes and simultaneous
 repository tests: it does not establish foreground FPS. Graphics budgets are
-not met; see `render-benchmark.json`. `?benchmark=1` is a diagnostic route; rendering
+not met and that report predates the latest chunk/road optimizations; see
+`render-benchmark.json`. `?benchmark=1` is a diagnostic route; rendering
 budgets in `perf-budget.json` are targets, not certified results. CI enforces the
 map download budget; it does not yet enforce a deterministic GPU scene budget.
 
@@ -63,7 +74,7 @@ map download budget; it does not yet enforce a deterministic GPU scene budget.
   long-session stability, contact resolution tuning and delta snapshots.
 - Authoritative police/missions/signals and shared NPC promotion. Online currently
   limits players to cars and suspends local NPC simulation; no online walking.
-- Actual tile streaming/quantized GPU buffers, screen-space LOD, baked AO,
+- Actual network tile streaming of map records, quantized GPU buffers, screen-space LOD, baked AO,
   complete GPU memory accounting, new Three version/CSM/postprocessing.
 - Downloaded and verified real landmark meshes; none are claimed included yet.
 - City-content density, police search behavior, economy, remapping UI and strict

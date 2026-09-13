@@ -60,7 +60,15 @@ ctx.testData=JSON.parse(fs.readFileSync(new URL('../dist/data/padova.json',impor
 ctx.cityData=JSON.parse(fs.readFileSync(new URL('../dist/data/city.json',import.meta.url)));
 ctx.terrainData=JSON.parse(fs.readFileSync(new URL('../dist/data/terrain.json',import.meta.url)));
 vm.runInContext(`data=testData;applyCityData(data,cityData);applyMapCorrections(data);districts=new Districts(data);terrain=new Terrain(terrainData,data,{modern:true});terrain.districts=districts;scene=new THREE.Scene();world=new CityWorld(scene,data,terrain);graph=makeRoadGraph(data.roads,{separateLevels:true});signals=new TrafficSignals(graph,data.signals);trams=new Trams(scene,data,terrain);incidents=new Incidents(scene);player=createPerson();camera=new THREE.PerspectiveCamera();sun=new THREE.DirectionalLight();marker=new THREE.Group();state.ready=true;state.started=true;createPopulation();followYaw=state.yaw;cameraRig.reset(state.yaw);`,ctx);
-const t=vm.runInContext('({terrain,waterRecovery,recover,dryRoad,addCar,travel,falling,state,keys,cars,people,world,scene,player,camera,clock,movePlayer,updateCamera,updateUI,toggleVehicle,beginMission,cancelMission,updateMission,clearPolice,simulate})',ctx);
+const t=vm.runInContext('({terrain,waterRecovery,recover,dryRoad,addCar,travel,falling,state,keys,cars,people,world,scene,player,camera,clock,movePlayer,updateCamera,updateUI,toggleVehicle,beginMission,cancelMission,updateMission,clearPolice,simulate,placeFeet})',ctx);
+
+// At dense mapped junctions, visible ground must sit below every surface road.
+// This coordinate previously produced a 4.6 m terrain bulge over Piazza delle Erbe.
+const junction={x:-57.65,z:-57.5},surfaces=t.terrain.roads.candidates(junction.x,junction.z).filter(s=>!s.road.tunnel&&!s.road.crossing);
+assert(surfaces.length>1,'expected overlapping mapped streets at terrain regression point');
+assert(t.terrain.visualGroundHeight(junction.x,junction.z)<=Math.min(...surfaces.map(s=>s.height))-.049);
+const footY=t.terrain.height(junction.x,junction.z);t.placeFeet(t.player,junction.x,footY,junction.z);
+const soles=new THREE.Box3().setFromObject(t.player);assert(Math.abs(soles.min.y-footY)<1e-6,'character soles must rest on the simulation surface');
 
 const initial=t.dryRoad({x:-700,z:-400},vehicles.VEHICLES.mito);assert(initial);
 for(const car of t.cars)car.mesh.visible=false;

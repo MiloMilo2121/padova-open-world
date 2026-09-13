@@ -1,6 +1,7 @@
 import {SpatialIndex,nearestOnSegment,clamp} from './core.js';
 
 export const MAX_GRADE=.085;
+const SAMPLE_SPACING=12,MAX_SMOOTHING_PASSES=16,SMOOTHING_EPSILON=.002;
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 class MaxHeap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);while(i){const p=(i-1)>>1;if(this.a[p].h>=v.h)break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){const first=this.a[0],v=this.a.pop();if(this.a.length){let i=0;while(i*2+1<this.a.length){let j=i*2+1;if(j+1<this.a.length&&this.a[j+1].h>this.a[j].h)j++;if(this.a[j].h<=v.h)break;this.a[i]=this.a[j];i=j;}this.a[i]=v;}return first;}}
 
@@ -9,7 +10,7 @@ class MaxHeap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v
 export class RoadSurfaces{
  constructor(map,terrain){this.terrain=terrain;this.modern=terrain.modern;this.index=new SpatialIndex(80);this.nodes=[];this.profiles=new Map();this.report={roads:map.roads.length,inferred:[],submergedEnds:[],steep:[],layers:0,culverts:0};const lookup=new Map();
   const node=(p,shared,road,endpoint)=>{
-   const base=()=>terrain.prato(...p)?terrain.pratoHeight+.28:terrain.elevation(...p),create=()=>{const h=base();this.nodes.push({x:p[0],z:p[1],base:h,h,edges:[]});return this.nodes.length-1;};
+   const base=()=>terrain.prato(...p)?terrain.pratoHeight+.28:terrain.elevation(...p),create=()=>{const h=base();this.nodes.push({x:p[0],z:p[1],base:h,h,edges:[],degree:0});return this.nodes.length-1;};
    if(!shared)return create();const key=p[0].toFixed(1)+','+p[1].toFixed(1);
    if(!this.modern){if(!lookup.has(key))lookup.set(key,create());return lookup.get(key);}
    const level=road.tunnel?-1:Number(road.layer)||(road.b?1:0),entries=lookup.get(key)||[],match=entries.find(e=>e.level===level)||entries.find(e=>e.endpoint&&endpoint);
@@ -17,7 +18,7 @@ export class RoadSurfaces{
   };
 
   for(const [id,road] of map.roads.entries()){
-   const ids=[],points=[];for(let i=1;i<road.p.length;i++){const a=road.p[i-1],b=road.p[i],n=Math.max(1,Math.ceil(distance(a,b)/6));for(let j=i===1?0:1;j<=n;j++){const p=[a[0]+(b[0]-a[0])*j/n,a[1]+(b[1]-a[1])*j/n];points.push(p);ids.push(node(p,j===0||j===n,road,i===1&&j===0||i===road.p.length-1&&j===n));}}
+   const ids=[],points=[];for(let i=1;i<road.p.length;i++){const a=road.p[i-1],b=road.p[i],n=Math.max(1,Math.ceil(distance(a,b)/SAMPLE_SPACING));for(let j=i===1?0:1;j<=n;j++){const p=[a[0]+(b[0]-a[0])*j/n,a[1]+(b[1]-a[1])*j/n];points.push(p);ids.push(node(p,j===0||j===n,road,i===1&&j===0||i===road.p.length-1&&j===n));}}
    if(ids.length<2)continue;
    const wet=points.map(p=>!terrain.prato(...p)&&terrain.waterDistance(...p)<0),hasWater=wet.some(Boolean),explicit=!!road.b,layer=Number(road.layer)||0,tunnel=!!road.tunnel;
    // Underground waterways are removed from the open-water index by Terrain.
@@ -54,7 +55,9 @@ export class RoadSurfaces{
   if(this.modern){this.alignParallelDecks();this.smoothProfiles();this.protectClearance(crossings);}
   // Broad elevation noise is grade-limited as well; do not make a road follow a crater.
   for(const profile of this.profiles.values())for(let i=1;i<profile.ids.length;i++){const a=this.nodes[profile.ids[i-1]],b=this.nodes[profile.ids[i]],grade=Math.abs(a.h-b.h)/Math.max(.01,distance(profile.points[i-1],profile.points[i]));if(grade>(profile.road.k==='steps'?.65:this.modern?.055:MAX_GRADE)+.005)this.report.steep.push({road:profile.id,grade});}
-  for(const n of this.nodes){n.degree=new Set(n.edges.map(e=>e.id)).size;delete n.edges;}
+  // Keep a stable object shape: deleting edges makes V8 allocate dictionary
+  // properties for every sampled node. Clearing the reference releases adjacency.
+  for(const n of this.nodes){n.degree=new Set(n.edges.map(e=>e.id)).size;n.edges=undefined;}
  }
  sample(road,x,z){const profile=this.profiles.get(road);if(!profile)return this.terrain.elevation(x,z);let best=null,d=Infinity;for(const s of this.index.near(x,z,road.w+8)){if(s.profile!==profile)continue;const q=nearestOnSegment(x,z,s.a,s.b),dd=Math.hypot(x-q.x,z-q.z);if(dd<d){d=dd;best={s,q};}}if(!best)return this.terrain.elevation(x,z);return this.segmentHeight(best.s,best.q.t);}
  alignParallelDecks(){
@@ -89,9 +92,9 @@ export class RoadSurfaces{
   const floors=new Float64Array(this.nodes.length).fill(-Infinity);
   for(const p of this.profiles.values())for(let i=0;i<p.ids.length;i++)if(p.wet[i]||p.layer>0||p.road.b){const id=p.ids[i];floors[id]=Math.max(floors[id],this.nodes[id].h);}
   const next=new Float64Array(this.nodes.length);
-  for(let pass=0;pass<64;pass++){
+  for(let pass=0;pass<MAX_SMOOTHING_PASSES;pass++){
    this.nodes.forEach((n,id)=>{let sum=0,weight=0;for(const e of n.edges){const w=1/Math.max(.1,e.d);sum+=this.nodes[e.id].h*w;weight+=w;}next[id]=Math.max(floors[id],weight?n.h*.5+sum/weight*.5:n.h);});
-   this.nodes.forEach((n,id)=>{n.h=next[id];});
+   let delta=0;this.nodes.forEach((n,id)=>{delta=Math.max(delta,Math.abs(n.h-next[id]));n.h=next[id];});if(delta<SMOOTHING_EPSILON)break;
   }
   // Reapply the grade envelope after constraints; cubic slopes stay below 8.5%.
   const heap=new MaxHeap();this.nodes.forEach((n,id)=>heap.push({id,h:n.h}));

@@ -24,7 +24,7 @@ python prepare_terrain.py --cache /tmp/padova-terrain
 
 The JSON includes the required source attribution and a link to the [upstream attribution/licence information](https://github.com/tilezen/joerd/blob/master/docs/attribution.md). Europe terrain uses Copernicus EU-DEM; SRTM/GMTED are credited to the U.S. Geological Survey. Attribution is also visible in the footer and About panel; the derived dataset can be downloaded there.
 
-World ground, road ribbons, parks, trees, player, traffic, camera, destination markers, procedural buildings and imported GLBs now share a height reference. Buildings stand on level foundations and their camera collision bounds include the foundation altitude. Streaming terrain uses 16 m cells, refined near water down to 4 m. Road ribbons subdivide at 8 m. Vehicle pitch follows the wheelbase slope, and uphill travel reduces acceleration.
+World ground, road ribbons, parks, trees, player, traffic, camera, destination markers, procedural buildings and imported GLBs now share a height reference. Buildings stand on level foundations and their camera collision bounds include the foundation altitude. Streaming terrain uses 16 m cells, refined near water down to 4 m. Ground vertices near surface roads use the lowest nearby road deck so coarse interpolation cannot cover a street; tunnels and raised crossings do not cut the visible ground. Road ribbons subdivide at 6 m and reuse one centreline-height sample per section. Vehicle pitch follows the wheelbase slope, and uphill travel reduces acceleration. Character roots subtract the authored shoe-sole height so the feet rest on the same surface used by movement.
 
 ## Rivers, bridges and recovery
 
