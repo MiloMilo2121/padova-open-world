@@ -1,13 +1,18 @@
 {
-  "format": "PDV2 v1 geometry arrays + metadata, gzip transport",
+  "format": "PDV2 v1 base + 400 m building tiles, gzip transport",
   "sourceBytes": 18330287,
-  "binaryBytes": 15294714,
-  "downloadBytes": 3712684,
+  "baseBinaryBytes": 5184978,
+  "baseDownloadBytes": 1292770,
+  "buildingTileBinaryBytes": 9886627,
+  "buildingTileDownloadBytes": 2851864,
+  "buildingTiles": 1122,
   "buildings": 87881,
+  "namedBuildingsInBase": 788,
   "roads": 34539,
   "coordinateResolutionMetres": 0.1,
   "limitations": [
-    "Full map is still decoded at boot; progressive tile loading is not implemented",
-    "Road and building metadata remain a compact JSON section"
+    "Road topology and road-surface profiles remain global simulation data",
+    "Integrated building geometry and collision records stay resident after first use",
+    "Tile payloads still use structured-clone objects rather than zero-copy GPU buffers"
   ]
 }

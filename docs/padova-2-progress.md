@@ -24,9 +24,11 @@ A hash-manifest test checks every live file. V2 uses `src/`, root `index.html`,
 - Real OSM footprint edges receive procedural cornices, plinths, shutters, windows
   and some balconies. Static batching, instanced pedestrians, consolidated car
   glass and warm sky/lighting added to V2 only.
-- Map geometry uses a binary decimetre-delta format decoded in a worker. Gzipped
-  payload: 3,712,684 bytes vs original JSON 18,330,287 bytes. The entire map is
-  still loaded; this is not quadtree tile streaming or zero-copy runtime geometry.
+- Map geometry uses a binary decimetre-delta format decoded in a persistent worker.
+  The global road/named-landmark base is 1,292,770 bytes; anonymous buildings are
+  split across 1,122 gzip tiles of 400 m. The initial centre fetch is 1,566,794
+  bytes and 8,960 footprints, compared with 3,712,684 bytes and all 87,881
+  footprints before tiling. Moving and map travel prefetch further tiles.
 - Fingerprinted Via Monte Cero endpoint correction applied to V2 client/server.
 - Real building source research and Blender/GLB asset queue documented separately.
 - Visible terrain is clamped below nearby surface roads, including overlapping OSM
@@ -34,23 +36,25 @@ A hash-manifest test checks every live file. V2 uses `src/`, root `index.html`,
   sole height. Tunnels and raised crossings retain their separate vertical level.
 - City geometry now streams in a circular queue: two immediate chunks, one later
   chunk per time slice, a 600 m gameplay prefetch band and distant chunk disposal.
-  The 87,881-footprint minimap renders in idle batches after play becomes available.
+  Decoded building tiles become collidable before rendering and enter the world
+  one tile per time slice. The minimap renders in idle batches after play is ready.
 - Road meshes cache their centreline samples, use 6 m render sections and create
   junction fans only at real source vertices. Road-surface nodes keep a stable V8
   object shape and use bounded smoothing over 12 m samples.
 
 ## Verification and limits
 
-20 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
+23 pure tests cover driving, protocol, delayed/missing snapshot reconciliation,
 render batching, server capacity/input flood bounds, idle-input expiry and live
-isolation, signal/tram batching and progressive world streaming. A V2 controller
+isolation, signal/tram batching, tile selection/cache reuse, dynamic collision and
+progressive world streaming. A V2 controller
 harness drives actual map terrain and checks camera finiteness, road/ground
 separation, sole placement and resource disposal. `npm run check` passed: typecheck, lint, simulation/controller tests, legacy
 city/terrain/modern tests, map audit and V2 production build. The added map budget
 test also passed separately.
 
 The isolated 32-client, 20-second real WebSocket loopback run passed with
-zero errors, approximately 9.7 KB/s per player and server tick p99 6.88 ms.
+zero errors, approximately 9.5–10.0 KiB/s per player and server tick p99 11.63 ms.
 A simultaneous browser/full-suite load caused queue overflow and disconnects;
 that failed run is retained in `.context/multiplayer-load-contended.json`.
 The server now bounds pending input to eight recent commands, dropping obsolete
@@ -68,13 +72,19 @@ not met and that report predates the latest chunk/road optimizations; see
 budgets in `perf-budget.json` are targets, not certified results. CI enforces the
 map download budget; it does not yet enforce a deterministic GPU scene budget.
 
+The isolated Node startup profile now reaches 253 MiB after world indexes and the
+first two geometry chunks, versus about 451 MiB after full-map world indexing in
+the comparable pre-tiling profile. This is process-heap evidence, not browser or
+VRAM certification. Global road-surface construction still takes about 3.9 s in
+that harness and is the next startup bottleneck.
+
 ## Outstanding plan work
 
 - Public multiplayer trial/deployment, network adversity over a real transport,
   long-session stability, contact resolution tuning and delta snapshots.
 - Authoritative police/missions/signals and shared NPC promotion. Online currently
   limits players to cars and suspends local NPC simulation; no online walking.
-- Actual network tile streaming of map records, quantized GPU buffers, screen-space LOD, baked AO,
+- Road/topology tiling, zero-copy quantized GPU buffers, screen-space LOD, baked AO,
   complete GPU memory accounting, new Three version/CSM/postprocessing.
 - Downloaded and verified real landmark meshes; none are claimed included yet.
 - City-content density, police search behavior, economy, remapping UI and strict

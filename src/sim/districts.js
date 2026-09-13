@@ -17,13 +17,14 @@ export const DISTRICTS={
 };
 export class Districts{
  constructor(map){this.map=map;this.index=new SpatialIndex(200);this.buildings=new SpatialIndex(60);this.roads=new SpatialIndex(80);this.cache=new Map();
-  const bounds=p=>[Math.min(...p.map(p=>p[0])),Math.min(...p.map(p=>p[1])),Math.max(...p.map(p=>p[0])),Math.max(...p.map(p=>p[1]))];
-  for(const a of map.landuse||[])this.index.add(a,...bounds(a.p));
-  for(const a of map.areas)if(['park','garden'].includes(a.k))this.index.add({...a,k:'park'},...bounds(a.p));
-  for(const b of map.buildings)this.buildings.add(b,...bounds(b.p));
+  this.bounds=p=>[Math.min(...p.map(p=>p[0])),Math.min(...p.map(p=>p[1])),Math.max(...p.map(p=>p[0])),Math.max(...p.map(p=>p[1]))];
+  for(const a of map.landuse||[])this.index.add(a,...this.bounds(a.p));
+  for(const a of map.areas)if(['park','garden'].includes(a.k))this.index.add({...a,k:'park'},...this.bounds(a.p));
+  this.addBuildings(map.buildings);
   for(const r of map.roads)for(let i=1;i<r.p.length;i++){const a=r.p[i-1],b=r.p[i];this.roads.add({a,b,road:r},Math.min(a[0],b[0])-r.w,Math.min(a[1],b[1])-r.w,Math.max(a[0],b[0])+r.w,Math.max(a[1],b[1])+r.w);}
   const brown=(map.landuse||[]).find(a=>a.k==='brownfield'&&Math.hypot(...a.p[0])>2600);this.wild=brown?{x:brown.p[0][0],z:brown.p[0][1]}:{x:-4300,z:-3400};
  }
+ addBuildings(buildings){for(const b of buildings)this.buildings.add(b,...this.bounds(b.p));}
  at(x,z,road=null){if(road&&['motorway','trunk','motorway_link','trunk_link'].includes(road.k))return 'motorway';if(dist({x,z},this.wild)<380)return 'wild';
   const uses=[...this.index.near(x,z)].filter(a=>pointInside(x,z,a.p));
   if(uses.some(a=>a.k==='industrial'))return 'industrial';

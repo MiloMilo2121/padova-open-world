@@ -3,3 +3,4 @@ build-v2/
 .context/
 .DS_Store
 assets-v2/data/padova-v2.bin.gz
+assets-v2/data/buildings/
