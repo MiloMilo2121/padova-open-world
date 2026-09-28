@@ -20,6 +20,8 @@ unity command
 
 Unity's MCP server is registered in the local Claude Code and Codex user configurations. Start a new agent session after opening the Editor to use the live tools.
 
+Read [the project brief](docs/PROJECT_BRIEF.md) for the game goals and [the agent development loop](docs/AGENT_DEVELOPMENT_LOOP.md) for the tested build, test, and Player control commands. Local verification results and current gaps are in `.context/AUTOMATION_AUDIT.md` in this Conductor workspace.
+
 ## Project data
 
 Commit `Assets/`, `Packages/`, and `ProjectSettings/`, including Unity `.meta` files. `Library/`, `Temp/`, `Logs/`, and other generated files are ignored.

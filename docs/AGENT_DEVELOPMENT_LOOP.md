@@ -1,0 +1,81 @@
+# Agent development loop
+
+These commands were tested in the local Conductor workspace on 2026-09-28 with Unity CLI `1.0.0-beta.11`, Editor `6000.3.25f1` arm64, and Pipeline `0.8.0-exp.1`. Run them from the Unity project root. A new Conductor chat may need **Refresh MCP status** and a new session to discover newly configured MCP tools.
+
+## 1. Preflight
+
+```sh
+test "$CONDUCTOR_IS_LOCAL" = 1
+unity --version
+unity license status --format json
+unity open .                 # if the Editor is not already running
+unity status --format json   # expect state: ready
+unity pipeline list --format json
+unity command editor_status --format json
+```
+
+The Editor must be running for Pipeline Editor commands. Unity Personal must be active on this Mac. `unity auth status` can be signed out while an active Personal license and local Editor control still work; Unity Cloud is not required. If the Editor reports Safe Mode, fix compile errors before retrying Pipeline.
+
+If the Editor closes between agent sessions, reopen it and wait for `unity status` to report `ready`. `unity open . --wait` keeps the launching terminal attached until the Editor exits; run that in a separate terminal when you need a long-lived Editor session.
+
+Claude Code user MCP name: `unity-editor-mcp`. Codex user MCP name: `unity`. Both start `unity mcp`; the global Blender MCP is separate. The MCP server can start while the Editor is closed, but Editor tools need a running Editor. This setup exists on this Mac; a fresh machine needs its own CLI, Editor, license, and MCP registration.
+
+## 2. Edit, compile, and test
+
+```sh
+unity command set_autotick --enable true --interval_ms 50 --persist true
+# Edit code and assets. Use Unity APIs through Pipeline for scenes, GameObjects, and serialized assets.
+unity command recompile
+unity command recompile_status --format json  # poll until completed; inspect errors
+unity command list_tests --mode editor --format json
+unity command run_tests --mode editor --format json
+```
+
+The current EditMode smoke test verifies that the sample scene and URP are configured. Add focused tests for actual gameplay behavior as features arrive. Play Mode can be controlled with `unity command editor_play` and `unity command editor_stop`.
+
+For a Game view image that includes screen-space UI, open the Game tab if needed, then run `capture_game_view --source screen`. If no Game view exists, this Editor command opens it:
+
+```sh
+unity command eval 'return UnityEditor.EditorWindow.GetWindow(System.Type.GetType("UnityEditor.GameView,UnityEditor")).titleContent.text;'
+```
+
+The Pipeline `capture_game_view --save_path` implementation writes under `Assets/` even when given an absolute path. Move inspection images to `.context/` afterward so they do not become game assets.
+
+## 3. Development Player smoke test
+
+The project config enables the runtime Pipeline server for Development builds. The package compiles the server out of normal release builds unless a special `ENABLE_RUNTIME_PIPELINE` define is deliberately added; do not add that define to shipping builds. The server binds to localhost and uses a per-run token.
+
+```sh
+unity command build --target StandaloneOSX \
+  --outputPath .context/build/PadovaOpenWorld.app \
+  --options '["Development","AllowDebugging"]' \
+  --scenes '["Assets/Scenes/SampleScene.unity"]' \
+  --confirm true --format json
+unity command build_status --format json  # poll until completed; require Succeeded
+./.context/build/PadovaOpenWorld.app/Contents/MacOS/padova-open-world \
+  -logFile "$PWD/.context/player.log"
+```
+
+Launch the Player from a separate terminal or process so the agent can continue issuing commands. The runtime descriptor appears inside `PadovaOpenWorld.app`. For `--runtime-path`, pass the **app directory**, not the descriptor file:
+
+```sh
+unity command runtime_status --runtime-path "$PWD/.context/build/PadovaOpenWorld.app" --format json
+unity command simulate_key --key W --action press --runtime-path "$PWD/.context/build/PadovaOpenWorld.app"
+unity command eval "UnityEngine.ScreenCapture.CaptureScreenshot(\"$PWD/.context/player.png\"); return \"queued\";" \
+  --runtime-path "$PWD/.context/build/PadovaOpenWorld.app"
+unity command quit --runtime-path "$PWD/.context/build/PadovaOpenWorld.app"
+```
+
+The Player also exposes `simulate_pointer`, `set_target_framerate`, logs, C# evaluation, and `runtime_status` performance counters. A successful input command only proves delivery; compare a game-state value before and after input to prove the action worked. The current blank scene has no player to move.
+
+A normal macOS release build was also verified to succeed. It did not contain `Unity.Pipeline.dll`, `Unity.Pipeline.IlInterpreter.dll`, or a runtime port descriptor. The small `Unity.Pipeline.Attributes.dll` metadata assembly remained in the output; it is not the command server. Do not ship the Development Player used for agent testing.
+
+## 4. Interpreting results
+
+- Editor tests: require explicit passed counts and zero failed tests.
+- Build: require `build_status.result == "Succeeded"`, not only a queued response.
+- Runtime: require a reachable runtime server, expected scene, frame progression, a screenshot, and feature-specific state assertions.
+- Performance: compare frame times and memory under a representative 20-minute route. The blank scene's FPS is not a game benchmark.
+- Close the development Player after testing. Keep the Editor open only while an agent needs it; closing it stops the local Pipeline server and saves battery.
+
+Multiple Conductor worktrees need separate local Unity project paths. The Unity CLI chooses by current directory or `--project-path`; use explicit paths if several Editors are open. A Conductor cloud workspace cannot access this Mac's Unity Editor. `.context/` is workspace-local and is not transferred to other worktrees, so this tracked guide is the portable handoff.
