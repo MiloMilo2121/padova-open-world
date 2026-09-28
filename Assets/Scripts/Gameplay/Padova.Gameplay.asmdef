@@ -1,0 +1,4 @@
+{
+  "name": "Padova.Gameplay",
+  "references": ["Padova.Geography", "Unity.InputSystem", "Unity.Pipeline.Attributes"]
+}

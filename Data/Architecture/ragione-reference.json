@@ -1,0 +1,19 @@
+{
+  "landmark": "Palazzo della Ragione, north elevation",
+  "sourcePhoto": "https://commons.wikimedia.org/wiki/File:Exterior_of_Palazzo_della_Ragione_(Padua).jpg",
+  "photographer": "Didier Descouens",
+  "photoDate": "2017-05-24",
+  "license": "CC-BY-SA-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "asset": "Assets/Architecture/PalazzoDellaRagione/RagioneNorth-Descouens-CCBYSA4.jpg",
+  "sha256": "1f6ee7000cb5515be990dd24b29067a9d791d157b4ed8d7272fe96eed37c115f",
+  "method": "Original photograph mapped to separate facade bands. Curved roof envelope inferred from photographic shape. Source DBT footprint locates the landmark.",
+  "limitations": [
+    "This is a photographic elevation study, not a scanned or measured architectural reconstruction.",
+    "Frontage photograph contains baked lighting and occluders; it is not a clean facade texture.",
+    "Layer depths, vertical photo registration and roof cross-section require measured verification.",
+    "South and end elevations are not reconstructed from this north-side photo."
+  ],
+  "sourceUnit": "UN_VOL:50321",
+  "adaptationLicense": "CC-BY-SA-4.0 for the photograph-based facade and roof mesh adaptation"
+}

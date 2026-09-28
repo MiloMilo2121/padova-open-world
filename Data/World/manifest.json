@@ -1,0 +1,19 @@
+{
+  "units": 19355,
+  "patches": 7221,
+  "trees": 6530,
+  "roadSegments": 652,
+  "roofFailures": [],
+  "extent": [
+    -1500,
+    -1300,
+    1500,
+    1300
+  ],
+  "sourceFiles": {
+    "UN_VOL": "e70b8be311dd1d4664bfd98bc27bf096a11f187434ef5bf9e7ff99549e10c49f",
+    "AR_STR": "b884547347ad1cab381a7fadaf6ed970206cf35bcc69a79eed4699419b1a13ba",
+    "AR_VRD": "05da569c1b68c36121b78c0154b2d2cbca2ac1b162408eee9b6ffa8515b9def3",
+    "AB_CDA": "3d6d954b46f26c14a734c6cf97fe7eb6d389036e7772a74bab7ea80725224119"
+  }
+}

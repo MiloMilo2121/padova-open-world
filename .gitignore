@@ -112,6 +112,10 @@ InitTestScene*.unity*
 /.context/
 .DS_Store
 
+# Local Python tooling caches
+__pycache__/
+*.pyc
+
 # Unity CLI skill is installed for each developer; only the project Pipeline skill is versioned
 /.agents/skills/unity-cli/
 /.claude/skills/unity-cli/

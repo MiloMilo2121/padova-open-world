@@ -1,6 +1,10 @@
 {
   "name": "Padova.OpenWorld.EditModeTests",
   "references": [
+    "Padova.Geography",
+    "Padova.Gameplay",
+    "Padova.Architecture",
+    "Padova.World",
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner"
   ],

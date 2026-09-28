@@ -1,0 +1,11 @@
+Palazzo della Ragione photographic elevation study
+
+Photograph: Exterior of Palazzo della Ragione (Padua).jpg
+Author: Didier Descouens
+Source: https://commons.wikimedia.org/wiki/File:Exterior_of_Palazzo_della_Ragione_(Padua).jpg
+License: Creative Commons Attribution-ShareAlike 4.0
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes: image mapped/cropped in UV coordinates onto separately positioned facade bands and a curved roof envelope. The source JPEG is unchanged. The photograph-based mesh adaptation is distributed under CC BY-SA 4.0.
+
+This is a reference-derived architectural study; depths, roof section and facade registration are approximate, not survey-certified. Photograph lighting and occluders remain visible. No endorsement by the photographer is implied.

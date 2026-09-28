@@ -1,0 +1,4 @@
+{
+  "name": "Padova.Geography",
+  "references": ["Unity.InputSystem"]
+}
