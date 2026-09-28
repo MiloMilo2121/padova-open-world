@@ -4,6 +4,10 @@ These commands were tested in the local Conductor workspace on 2026-09-28 with U
 
 ## 1. Preflight
 
+The current exploration milestone uses `python3 Tools/verify_world.py --build --measure`. It covers cars, map, plane and pedestrians in addition to walking. See [PLAYABLE.md](PLAYABLE.md). No computer-use automation is required: scene construction, input, state checks and screenshots all use Unity Pipeline. Treat `ITERATION_AND_FIDELITY.md`'s photographic landmark discussion as history; the current architecture is modelled geometry.
+
+Read [ITERATION_AND_FIDELITY.md](ITERATION_AND_FIDELITY.md) for verified gotchas: old Player descriptors, app focus, FBX curve paths, input-event timing and overlapping GIS ground. Use `python3 Tools/verify_playable.py --editor --case controls,jump` for a focused loop, then `--build --measure` for the final native gate. The compiled probe replaces runtime C# snippets for normal gameplay checks.
+
 ```sh
 test "$CONDUCTOR_IS_LOCAL" = 1
 unity --version
@@ -31,7 +35,7 @@ unity command list_tests --mode editor --format json
 unity command run_tests --mode editor --format json
 ```
 
-The current EditMode smoke test verifies that the sample scene and URP are configured. Add focused tests for actual gameplay behavior as features arrive. Play Mode can be controlled with `unity command editor_play` and `unity command editor_stop`.
+EditMode tests verify project setup and the saved Padova survey's source counts, heights, portico treatment, mesh references and metric anchors. Geographic import tests run with `.context/geo-venv/bin/python -m unittest discover -s Tools/geodata -v`. Add focused tests for actual gameplay behavior as features arrive. Play Mode can be controlled with `unity command editor_play` and `unity command editor_stop`.
 
 For a Game view image that includes screen-space UI, open the Game tab if needed, then run `capture_game_view --source screen`. If no Game view exists, this Editor command opens it:
 
@@ -42,6 +46,10 @@ unity command eval 'return UnityEditor.EditorWindow.GetWindow(System.Type.GetTyp
 The Pipeline `capture_game_view --save_path` implementation writes under `Assets/` even when given an absolute path. Move inspection images to `.context/` afterward so they do not become game assets.
 
 ## 3. Development Player smoke test
+
+The default game scene is now `PadovaPlayable.unity`. Run `python3 Tools/verify_playable.py --build` for the animated third-person character and gameplay checks. See [PLAYABLE.md](PLAYABLE.md). `verify_survey.py` still verifies the separate survey view.
+
+For the current district, `python3 Tools/verify_survey.py --build` builds and launches `.context/build/PadovaCentro.app`, sends real keyboard and pointer input through Pipeline, asserts camera/selection state, takes three screenshots, samples counters, and closes the Player. Evidence is written to `.context/padova-player-verification.json`. See [REAL_WORLD_DATA.md](REAL_WORLD_DATA.md) for the scene's limits. The commands below retain the original blank-scene infrastructure smoke example.
 
 The project config enables the runtime Pipeline server for Development builds. The package compiles the server out of normal release builds unless a special `ENABLE_RUNTIME_PIPELINE` define is deliberately added; do not add that define to shipping builds. The server binds to localhost and uses a per-run token.
 
@@ -66,7 +74,7 @@ unity command eval "UnityEngine.ScreenCapture.CaptureScreenshot(\"$PWD/.context/
 unity command quit --runtime-path "$PWD/.context/build/PadovaOpenWorld.app"
 ```
 
-The Player also exposes `simulate_pointer`, `set_target_framerate`, logs, C# evaluation, and `runtime_status` performance counters. A successful input command only proves delivery; compare a game-state value before and after input to prove the action worked. The current blank scene has no player to move.
+The Player also exposes `simulate_pointer`, `set_target_framerate`, logs, C# evaluation, and `runtime_status` performance counters. A successful input command only proves delivery; compare a game-state value before and after input to prove the action worked. The original SampleScene has no player; the new survey scene has an inspection camera, not a walking character.
 
 A normal macOS release build was also verified to succeed. It did not contain `Unity.Pipeline.dll`, `Unity.Pipeline.IlInterpreter.dll`, or a runtime port descriptor. The small `Unity.Pipeline.Attributes.dll` metadata assembly remained in the output; it is not the command server. Do not ship the Development Player used for agent testing.
 

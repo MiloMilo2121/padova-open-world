@@ -1,0 +1,4 @@
+# Optional tooling for survey processing, architectural plans, textures and maps.
+# Opening the Unity scene does not require Python packages.
+-r Tools/geodata/requirements.txt
+Pillow==11.3.0

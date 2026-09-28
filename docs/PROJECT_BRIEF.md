@@ -4,7 +4,7 @@
 
 Build a native macOS open-world game set in Padova, starting from a blank project. The first deliverable is one small, navigable district with a complete build–run–test loop. Expand only after measuring performance and playability on the target Mac.
 
-The primary development and performance target is a fanless MacBook Air M4 with 16 GB RAM. Other Apple Silicon MacBooks should get an appropriate quality setting. A proposed first benchmark is 1080p at 60 fps on the M4 Air, with a lower-quality option; this is a goal, **not** a measured result. Measure sustained play for at least 20 minutes, including memory use, frame times, thermals, and loading stutter. The current empty scene gives no useful game performance estimate.
+The primary development and performance target is a fanless MacBook Air M4 with 16 GB RAM. Other Apple Silicon MacBooks should get an appropriate quality setting. A proposed first benchmark is 1080p at 60 fps on the M4 Air, with a lower-quality option; this is a goal, **not** a measured result. Measure sustained play for at least 20 minutes, including memory use, frame times, thermals, and loading stutter. Neither the original empty scene nor the new cartographic survey scene establishes performance for finished gameplay.
 
 ## Why this stack
 
@@ -22,4 +22,6 @@ Blender is the local asset authoring tool. Its MCP is installed for Codex and Cl
 
 ## Next product milestone
 
-Specify and implement one playable Padova block: player movement, a repeatable route, basic environment and collision, streaming boundary, and a measurable objective. Add a deterministic agent test that sends input, checks player position and objective state, captures the rendered result, and compares frame-time and memory metrics against an established baseline. Until that exists, the infrastructure loop is proven but gameplay QA is not.
+Start in the real historic core around Palazzo della Ragione and the Erbe, Frutta and Signori piazzas. The user's explicit requirement is real street layout and real buildings: no guessed or merely plausible shapes or façades. Use public sources for now. Missing geographic or architectural evidence stays unresolved. See [REAL_WORLD_DATA.md](REAL_WORLD_DATA.md) for the municipal survey import, its age and the remaining façade/roof work.
+
+Specify and implement one playable Padova block: player movement, a repeatable route, basic environment and collision, streaming boundary, and a measurable objective. Add a deterministic agent test that sends input, checks player position and objective state, captures the rendered result, and compares frame-time and memory metrics against an established baseline. The survey scene now has input/state checks for exploration and record selection; walking, objectives and district streaming still need their own gameplay scenarios.

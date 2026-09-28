@@ -1,29 +1,265 @@
 # Padova Open World
 
-A new Unity 6.3 LTS project using the Universal Render Pipeline. The project starts from Unity's blank Universal 3D template and targets native macOS development.
+A native macOS exploration game built with **Unity 6.3 LTS and the Universal Render Pipeline (URP)**. Start in Piazza della Frutta, walk through central Padova, drive a car, set a waypoint on the city map, or explore from an assisted sightseeing plane.
 
-## Open the project
+The city uses public municipal geography: real street plans, building outlines, courtyards, recorded elevations and portico clearances. Architectural detail is modelled in 3D. **Ordinary façades and roofs use documented local typology; they are not measured elevations or scans of every building.** Photographs are not projected onto façades.
 
-Install Unity Editor `6000.3.25f1` for Apple silicon and activate a Unity Personal license. From this repository's root, run:
+## Current prototype
+
+- A detailed historic core around Palazzo della Ragione and the Erbe, Frutta and Signori piazzas.
+- A **3 × 2.6 km** surrounding area with **19,355 additional surveyed volume units**. Several units can belong to one building.
+- Modelled Palazzo della Ragione, with additional details for Torre dell'Orologio, Palazzo del Capitanio, the Duomo, baptistery and Palazzo del Bo.
+- An animated third-person character, walking/running/jumping, collision and a following camera.
+- 32 pedestrians, 12 market stalls, 11 lamps, six benches and trees placed inside mapped green areas.
+- Three drivable cars, an interactive map with waypoints, eight discoverable places and an assisted aircraft.
+
+Development, builds and tests run locally. Unity Cloud, Unity Version Control, Cloud Build and paid Unity Gaming Services are disconnected.
+
+## Requirements
+
+### Open and play
+
+| Requirement | Project baseline |
+| --- | --- |
+| Computer | Apple Silicon Mac; development target: MacBook Air M4 with 16 GB RAM |
+| Unity Editor | **6000.3.25f1**, Apple Silicon, pinned in [ProjectVersion.txt](ProjectSettings/ProjectVersion.txt) |
+| Unity license | An active Editor license; local development was verified with Unity Personal |
+| Source control | Git |
+| First import | Internet access for Unity Package Manager to restore the pinned packages |
+
+Use Unity Hub to install the pinned Editor and its Mac build support. Open the root folder containing `Assets/`, `Packages/` and `ProjectSettings/`. Other platforms and Editor versions have not been validated.
+
+The city plans, materials, character assets, vehicle meshes and pedestrian NavMesh are included in the repository. **Playing the saved scene does not require Python, Blender, CGAL or a fresh download of the survey.** After packages are restored, the game uses local assets and has no live map-service dependency.
+
+Key packages are pinned in [manifest.json](Packages/manifest.json) and [packages-lock.json](Packages/packages-lock.json):
+
+| Package | Version | Purpose |
+| --- | --- | --- |
+| Universal Render Pipeline | 17.3.0 | Materials, lighting, shadows and post-processing |
+| Input System | 1.20.0 | Keyboard and pointer controls |
+| AI Navigation | 2.0.14 | Pedestrian navigation |
+| Test Framework | 1.6.0 | Unity EditMode tests |
+| Unity Pipeline | 0.8.0-exp.1 | Local Editor and Development Player automation |
+
+### Optional development tools
+
+- **Unity CLI**: tested with `1.0.0-beta.11`; needed for the terminal workflow below. The game can also be opened and built through Unity Hub and the Editor.
+- **Python 3.9–3.12** for geographic processing and image generation. The pinned toolchain was exercised with Python 3.9.6. Install [requirements.txt](requirements.txt).
+- **Xcode Command Line Tools and Homebrew CGAL** for rebuilding roof geometry. The C++ helper uses C++17, GMP and MPFR, with Apple Silicon Homebrew paths under `/opt/homebrew`.
+- The Python native verification scripts use the standard library; they do not need the geographic packages.
+
+Unity CLI's documented macOS installer is optional; open a new terminal after installing and check `unity --version`:
+
+```sh
+curl -fsSL https://unity.com/install.sh | UNITY_CLI_CHANNEL=beta bash
+```
+
+```sh
+# Optional: geographic/material tools only
+python3 -m venv .context/geo-venv
+.context/geo-venv/bin/python -m pip install -r requirements.txt
+
+# Optional: rebuild the CGAL roof helper
+xcode-select --install
+brew install cgal
+```
+
+## Quickstart
+
+### 1. Clone the Unity branch
+
+```sh
+git clone --branch scandolo/unity-foundation https://github.com/scandolo/padova-open-world.git
+cd padova-open-world
+```
+
+### 2. Open the project
+
+In Unity Hub, choose **Add project from disk**, select this folder and open it with **6000.3.25f1**. Wait for package restoration and the initial asset import to finish.
+
+With Unity CLI installed, the equivalent is:
 
 ```sh
 unity open .
 ```
 
-The Unity CLI and `com.unity.pipeline` package are configured for local Editor automation. After the Editor finishes importing packages, check the connection with:
+### 3. Start playing
+
+Open **`Assets/Scenes/PadovaPlayable.unity`** in the Project window and press **Play**. The city geometry is generated from the included plans when the scene loads. The character starts in Piazza della Frutta.
+
+`Assets/Scenes/PadovaCentroSurvey.unity` is a separate cartographic inspection scene with source-record selection; it is not the game scene.
+
+### Controls
+
+| Input | On foot | Driving | Flight |
+| --- | --- | --- | --- |
+| Arrow keys / WASD | Move relative to the camera | Accelerate, reverse, steer | Climb, descend, bank |
+| Shift | Run | — | Fly faster |
+| Space | Jump | Brake | Slow down |
+| Return | Enter a nearby car | Exit when stopped | — |
+| M | Toggle map | Toggle map | Toggle map |
+| F | Start airborne tour | Start tour after stopping | Return to the previous walking position |
+| R | Return to the market | Reset the car | End flight |
+| Q / E or click-drag | Orbit camera | — | — |
+| C / scroll | Centre camera / zoom | — | — |
+| Tab | Toggle running | — | — |
+
+The map pauses the simulation. Drag to pan, scroll to zoom and click to place a waypoint; M or Esc closes it. Blue squares mark cars on Via Dante, Corso Milano and Via Roma. Waypoint distances are straight-line distances, not driving routes.
+
+### 4. Build a native Mac app
+
+In **File → Build Profiles**, select macOS and ensure `Assets/Scenes/PadovaPlayable.unity` is the enabled scene. Use **Build and Run**. Keep local output in `Builds/` or `.context/build/`, which are ignored by Git.
+
+For an automated Development Player build and gameplay verification, leave the Editor open and run:
 
 ```sh
-unity pipeline list
-unity status
-unity command
+mkdir -p .context/build .context/world
+unity status --project-path "$PWD" --format json
+unity command set_autotick --enable true --interval_ms 50 --project-path "$PWD"
+python3 Tools/verify_world.py --build --measure
 ```
 
-Unity's MCP server is registered in the local Claude Code and Codex user configurations. Start a new agent session after opening the Editor to use the live tools.
+The script builds `.context/build/PadovaPlayable.app`, launches it, sends input, checks game state, captures screenshots and closes the Player. To play that build afterward:
 
-Read [the project brief](docs/PROJECT_BRIEF.md) for the game goals and [the agent development loop](docs/AGENT_DEVELOPMENT_LOOP.md) for the tested build, test, and Player control commands. Local verification results and current gaps are in `.context/AUTOMATION_AUDIT.md` in this Conductor workspace.
+```sh
+open .context/build/PadovaPlayable.app
+```
 
-## Project data
+This `.app` is generated locally and is not included in Git. Development builds contain a localhost Pipeline command server; use a normal non-Development build for distribution.
 
-Commit `Assets/`, `Packages/`, and `ProjectSettings/`, including Unity `.meta` files. `Library/`, `Temp/`, `Logs/`, and other generated files are ignored.
+## Technical overview: how the city was built
 
-This local project is not linked to Unity Cloud and does not use Cloud Build, Unity Version Control, or paid Unity Gaming Services. The separate Unity Cloud project created in the web interface is not needed for local development.
+### 1. Import the real geography
+
+[Tools/geodata/padova.py](Tools/geodata/padova.py) reads the public **Comune di Padova / Regione del Veneto DBT 2007**. Source snapshots, attributes, hashes and derived core data are recorded under `Data/PadovaCentro/`.
+
+Coordinates are transformed from **EPSG:6706** to **EPSG:7791**, then rebased around **11.8744° E, 45.4077° N**. Unity X points east, Z points to grid north, and one unit is one metre. Vertical coordinates subtract a 15 m reference offset. Polygon outlines and courtyard holes are retained.
+
+### 2. Turn the survey into an architectural plan
+
+[Tools/architecture/plan_city.py](Tools/architecture/plan_city.py) examines neighbouring volumes to classify street façades, party walls, courtyard walls and porticoes. It uses recorded eave elevations and valid `UN_VOL_INH` clearances for suspended volumes.
+
+The offline C++ helper, [roof_skeleton.cpp](Tools/architecture/roof_skeleton.cpp), uses CGAL straight skeletons to construct hipped roofs. Roof pitch is typology: the source does not provide surveyed ridges. The result is `Assets/Geography/PadovaCentro/CityPlan.json`.
+
+### 3. Generate the 3D city in Unity
+
+`Assets/Scripts/Architecture/` reads the plans and builds meshes through Unity APIs:
+
+| Component | Responsibility |
+| --- | --- |
+| `PadovaCity` / `MeshSink` | Chunked geometry, material slots, ground, collision and two visual detail levels |
+| `FacadeBuilder` | Modelled openings, reveals, shutters, cornices, shopfronts, columns and arcades |
+| `RagioneBuilder` | Palazzo della Ragione's halls, loggias, shops and hull-shaped roof |
+| `LandmarkBuilder` | Landmark-specific additions for the clock, Capitanio, Duomo/baptistery and Bo |
+| `Streetscape` / `WorldShapes` | Original market, street-object and vehicle geometry |
+
+Generated city meshes use `HideFlags.DontSave`: the scene stores the plans and configuration and recreates those meshes on load. Supporting assets such as vehicles, the NavMesh and the older survey-inspection mesh library are saved as Unity assets. Materials combine reusable Poly Haven surfaces, normal maps and generated architectural patterns with URP lighting, an HDR sky and post-processing.
+
+### 4. Extend beyond the core
+
+[Tools/world/expand.py](Tools/world/expand.py) exports `Data/World/WorldPlan.json`, including the surrounding volumes, roads, green areas, waterways and landmark anchors. Unity imports a copy under `Assets/World/`.
+
+`WorldContext` builds the surroundings in **150 m chunks** and enables rendering/collision by distance. Outer walls retain their source outlines and nominal bases/eaves; façades are simpler than in the core. Navigation terrain interpolates nearby nominal base elevations on a 50 m grid and blends into the core's ground surface. This is an approximation, not a terrain scan. Trees are authored placements within mapped green polygons, not surveyed individual trees.
+
+[Tools/world/map.py](Tools/world/map.py) draws a north-up map from the same polygons used by the city. [verify_sources.py](Tools/world/verify_sources.py) compares the expansion's outlines, elevations and clearances with the original municipal shapefile.
+
+### 5. Add gameplay and verification
+
+- **Walking:** `ThirdPersonMotor` uses a `CharacterController`; `ThirdPersonCamera` follows it and retracts at obstructions. Kenney animation curves are remapped to the imported skeleton.
+- **Pedestrians:** `CityCrowd` spawns animated `NavMeshAgent` characters on an Editor-baked navigation mesh, with path checks and local avoidance.
+- **Cars:** `CityCar` uses a `Rigidbody` and four `WheelCollider` suspension units for acceleration, steering and braking.
+- **Flight:** `TourPlane` implements assisted arcade motion, altitude limits and boundary recovery. `OpenWorld` manages entering/exiting vehicles, camera changes and safe return to walking.
+- **Map and HUD:** `OpenWorld` provides pan/zoom, coordinate conversion, waypoints, discovery state and mode-specific controls.
+- **Automation:** compiled `GameplayProbe` and `WorldProbe` commands expose state through Unity Pipeline. Python verification sends real Input System events and asserts observed results.
+
+The runtime performs no GIS downloads or CGAL compilation. Geographic processing and roof generation happen offline; Unity consumes the prepared plans and assets.
+
+## Repository layout
+
+```text
+Assets/
+  Scenes/             Playable scene and survey inspection scene
+  Scripts/
+    Geography/        Source records and survey inspection
+    Architecture/     City, façades, roofs, landmarks and surroundings
+    Gameplay/         Walking character, camera and probes
+    World/            Cars, crowd, aircraft, map and exploration state
+  Art/                Textures, materials, sky and character source assets
+  Geography/          Imported core city plan and survey assets
+  World/              Imported outer plan, map, cars and pedestrian NavMesh
+  Tests/EditMode/     Project, survey, character and world tests
+AgentScripts/         Unity API builders and offscreen capture scripts
+Data/                 Geographic snapshots, generated plans and provenance
+Tools/                Python processing, C++ roof helper and native verification
+Packages/             Pinned Unity dependencies
+ProjectSettings/      Editor, renderer, input and build configuration
+docs/                 Development loop, fidelity, sources and controls
+requirements.txt      Optional Python geographic/material toolchain
+```
+
+`.context/` is local scratch space for downloads, virtual environments, reports, screenshots and builds. It is not part of a fresh clone. Conductor and agent MCP registrations are optional, machine-local development conveniences.
+
+## Development and tests
+
+With the project open:
+
+```sh
+unity status --project-path "$PWD" --format json
+unity list --project-path "$PWD" --format json
+unity command set_autotick --enable true --interval_ms 50 --project-path "$PWD"
+unity command recompile --project-path "$PWD"
+unity command recompile_status --project-path "$PWD" --format json
+```
+
+Wait for recompilation to finish and check `failed` and `errors` before continuing. A successful CLI invocation can still report compilation errors inside its result.
+
+```sh
+# Unity tests; poll test_status until complete and require a nonzero test count
+unity command run_tests --mode editor --async_tests true --project-path "$PWD"
+unity command test_status --project-path "$PWD" --format json
+
+# Geographic tests using the versioned source snapshots
+.context/geo-venv/bin/python -m unittest discover -s Tools/geodata -v
+
+# Focused native verification, reusing an unchanged matching build
+python3 Tools/verify_world.py --case map,car,flight,crowd
+```
+
+The native verifier checks the build's source fingerprint, process ID, scene readiness and application focus. Reports and screenshots go into `.context/`. See [the development loop](docs/AGENT_DEVELOPMENT_LOOP.md) and [playable verification](docs/PLAYABLE.md) for evidence and known automation issues.
+
+### Rebuild the scene from the included plans
+
+These builders regenerate scene objects and save `PadovaPlayable.unity`; save any manual scene work first. Stop Play Mode before running them.
+
+```sh
+unity command run_script --file AgentScripts/BuildPadovaCity.cs --entry BuildPadovaCity.Build --project-path "$PWD"
+unity command run_script --file AgentScripts/BuildOpenWorld.cs --entry BuildOpenWorld.Build --project-path "$PWD"
+unity command run_script --file AgentScripts/CaptureViews.cs --entry CaptureViews.All --project-path "$PWD"
+```
+
+Run `BuildOpenWorld` after `BuildPadovaCity` so it reconnects the wider world to the rebuilt core and rebakes pedestrian navigation. These commands use the included plans and imported art; first-time players do not need to run them.
+
+Regenerating the **geographic inputs** is a separate, optional workflow. It requires the original municipal archive, regional road snapshot and, for material regeneration, original image downloads in `.context/`. Those large source caches are not included. See [geographic sources and acquisition](docs/REAL_WORLD_DATA.md), [architectural pipeline](docs/ARCHITECTURE.md) and [expansion provenance](Data/World/landmarks.md) before running exporters.
+
+## Fidelity and current limits
+
+- Municipal records date from **2007**; the game is not a certified model of present-day Padova.
+- Ordinary façade details, roof shapes, material finishes and much landmark ornament are typology or reference-informed models, rather than per-building scans.
+- The world is finite. The surroundings have less architectural detail than the central district.
+- Cars are player-driven; autonomous traffic, building interiors and a broader mission system are not implemented.
+- Flight starts airborne. There is no airport, takeoff, landing or flight-simulator physics.
+- The M4 Air target is sustained smooth play. Short walking samples reached 60 FPS, but RPC-heavy tests showed stalls and later Pipeline timeouts. Flight and 20-minute sustained/thermal performance are not certified.
+
+## Sources and attribution
+
+| Content | Source / license |
+| --- | --- |
+| Municipal geography and regional road network | Comune di Padova / Regione del Veneto, IODL 2.0 |
+| Landmark names and uses | OpenStreetMap contributors, ODbL |
+| Surface textures and sky | Poly Haven, CC0 |
+| Character, skins and animations | Kenney, CC0 |
+| Ragione modelling reference | Didier Descouens photograph, CC BY-SA 4.0; used as a drawing reference |
+
+Detailed source identities, hashes, licenses and modelling limits are in [REAL_WORLD_DATA.md](docs/REAL_WORLD_DATA.md), [THIRD_PARTY_ASSETS.md](docs/THIRD_PARTY_ASSETS.md) and [Data/World/landmarks.md](Data/World/landmarks.md). CGAL is used by the offline roof tool and is not linked into the Player. Third-party data and art retain their respective licenses.
+
+Commit `Assets/`, `Packages/`, `ProjectSettings/`, source tools, data and Unity `.meta` files. Keep `Library/`, `Temp/`, local credentials, logs, `.context/` and Player builds out of Git.
