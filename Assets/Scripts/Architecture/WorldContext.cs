@@ -28,11 +28,22 @@ namespace Padova.Architecture
     [Serializable] public sealed class WorldTree {public float x,z,height;public string source;}
     [Serializable] public sealed class WorldRoad {public string id,name;public float[] points;}
     [Serializable] public sealed class WorldPlace {public string name,source;public float x,z;}
+    /// <summary>Survey records superseded by Blender landmark models (Assets/Art/Landmarks/Landmarks.json).</summary>
+    [Serializable] public sealed class LandmarkManifest
+    {
+        public string[] replacedUnits=new string[0],replacedPatches=new string[0];public float[] ownGround=new float[0];public WorldPlace[] places=new WorldPlace[0];public LandmarkModel[] models=new LandmarkModel[0];
+        public bool OwnsGround(float x0,float z0,float x1,float z1)
+        {
+            for(int i=0;i+3<ownGround.Length;i+=4)if(x0>=ownGround[i]-.01f&&z0>=ownGround[i+1]-.01f&&x1<=ownGround[i+2]+.01f&&z1<=ownGround[i+3]+.01f)return true;
+            return false;
+        }
+    }
+    [Serializable] public sealed class LandmarkModel {public string name,asset;public float[] anchor;}
 
     [ExecuteAlways,DefaultExecutionOrder(-450)]
     public sealed class WorldContext:MonoBehaviour
     {
-        public TextAsset Plan;public PadovaCity City;public float ViewDistance=1200;public float CollisionDistance=330;
+        public TextAsset Plan,Landmarks;public PadovaCity City;public float ViewDistance=1200;public float CollisionDistance=330;
         public int Buildings,Chunks;public float BuildMilliseconds;
         public WorldPlan Data{get;private set;}
         Transform root;readonly List<(Vector3 point,GameObject visual,Collider collider)> chunks=new();
@@ -52,6 +63,9 @@ namespace Padova.Architecture
             if(!City)City=UnityEngine.Object.FindFirstObjectByType<PadovaCity>();
             if(!City || City.Materials.Length<(int)Slot.Count)return;
             var watch=System.Diagnostics.Stopwatch.StartNew();Data=JsonUtility.FromJson<WorldPlan>(Plan.text);
+            var manifest=Landmarks?JsonUtility.FromJson<LandmarkManifest>(Landmarks.text):new LandmarkManifest();
+            var replacedUnits=new HashSet<string>(manifest.replacedUnits);var replacedPatches=new HashSet<string>(manifest.replacedPatches);
+            if(manifest.places.Length>0){var places=new List<WorldPlace>(Data.landmarks);places.AddRange(manifest.places);Data.landmarks=places.ToArray();}
             root=new GameObject("Generated surrounding Padova"){hideFlags=HideFlags.DontSave}.transform;root.SetParent(transform,false);
             var blocks=new Dictionary<Vector2Int,Block>();
             Block At(float x,float z)
@@ -63,6 +77,7 @@ namespace Padova.Architecture
             Buildings=0;
             foreach(var unit in Data.units)
             {
+                if(replacedUnits.Contains(unit.id))continue;
                 Unit(At(unit.cx,unit.cz).Mesh,unit);Buildings++;
             }
             foreach(var pair in blocks)
@@ -74,6 +89,7 @@ namespace Padova.Architecture
             var patches=new Dictionary<string,MeshSink>();
             foreach(var p in Data.patches)
             {
+                if(replacedPatches.Contains(p.id))continue;
                 if(!patches.TryGetValue(p.kind,out var sink))patches[p.kind]=sink=new MeshSink();
                 var slot=p.kind=="road"?Slot.Asphalt:p.kind=="water"?Slot.ClockBlue:Slot.Foliage;
                 var v=new Vector3[p.v.Length/2];var uv=new Vector2[v.Length];
@@ -85,7 +101,7 @@ namespace Padova.Architecture
             var baseGround=new MeshSink();float x0=Data.extent[0],z0=Data.extent[1],x1=Data.extent[2],z1=Data.extent[3];
             Vector3 P(float x,float z)=>new Vector3(x,Data.GroundAt(x,z)-.025f,z);
             // Surrounding ground is a fitted-level context surface; original road/green/water plans overlay it.
-            void GroundRect(float a,float b,float c,float d){if(c<=a||d<=b)return;baseGround.Quad(Slot.Courtyard,P(a,b),P(c,b),P(c,d),P(a,d),Vector3.up,new Vector2(a,b),new Vector2(c,b),new Vector2(c,d),new Vector2(a,d));}
+            void GroundRect(float a,float b,float c,float d){if(c<=a||d<=b||manifest.OwnsGround(a,b,c,d))return;baseGround.Quad(Slot.Courtyard,P(a,b),P(c,b),P(c,d),P(a,d),Vector3.up,new Vector2(a,b),new Vector2(c,b),new Vector2(c,d),new Vector2(a,d));}
             var core=City.Data.extent;
             for(float x=x0;x<x1;x+=25)for(float z=z0;z<z1;z+=25)
             {

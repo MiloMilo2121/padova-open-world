@@ -22,8 +22,9 @@ namespace Padova.World
                 planeTravel=g.Plane.DistanceTravelled,npcs=g.Crowd.ActiveCount,npcsMoved=g.Crowd.MovedCount,npcTravel=g.Crowd.TotalTravel,invalidNav=invalid,
                 worldBuildings=g.City.Buildings,g.Discoveries,playerEnabled=g.Player.enabled,colliderEnabled=g.Player.GetComponent<CharacterController>().enabled};
         }
-        [CliCommand("world_fixture","Place the walking character beside a car or reset the exploration state for repeatable input tests.")]
-        public static object Fixture([CliArg("name","car | reset",Required=true)]string name)
+        [CliCommand("world_fixture","Place the walking character beside a car, at a mapped point, or reset the exploration state for repeatable input tests.")]
+        public static object Fixture([CliArg("name","car | reset | at",Required=true)]string name,
+            [CliArg("x","Grid east for 'at'")]float x=0,[CliArg("z","Grid north for 'at'")]float z=0,[CliArg("yaw","Heading in degrees for 'at'")]float yaw=0)
         {
             var g=Game;g.SetMap(false);
             if(g.Mode=="fly")g.EndFlight();if(g.Mode=="drive"){g.Driving.ResetCar();g.ExitCar();}
@@ -34,6 +35,13 @@ namespace Padova.World
                 if(Physics.Raycast(p+Vector3.up*3,Vector3.down,out var hit,8,1<<8))p=hit.point+Vector3.up*.04f;
                 var controller=g.Player.GetComponent<CharacterController>();controller.enabled=false;g.Player.transform.position=p;controller.enabled=true;
                 g.Player.VerticalSpeed=-2;g.Player.FollowCamera.SetTestHeading(car.transform.eulerAngles.y);
+            }
+            else if(name=="at")
+            {
+                var p=new Vector3(x,200,z);
+                if(!Physics.Raycast(p,Vector3.down,out var hit,400,(1<<8)|(1<<9)))throw new InvalidOperationException("No ground at "+x+","+z);
+                var controller=g.Player.GetComponent<CharacterController>();controller.enabled=false;g.Player.transform.position=hit.point+Vector3.up*.04f;controller.enabled=true;
+                g.Player.VerticalSpeed=-2;g.Player.FollowCamera.SetTestHeading(yaw);g.Player.Visual.rotation=Quaternion.Euler(0,yaw,0);
             }
             else throw new ArgumentException(name);
             return Read();

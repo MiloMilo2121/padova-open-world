@@ -45,6 +45,12 @@ python3 Tools/verify_playable.py --build --measure
 
 `Padova.World` contains pedestrian navigation, WheelCollider cars, an assisted arcade aircraft, map, waypoint and discovery HUD. `BuildOpenWorld.cs` saves the scene and bakes the pedestrian NavMesh. See [controls and regeneration](PLAYABLE.md).
 
+## Blender landmark models
+
+The Basilica del Santo and Prato della Valle are procedural Blender models, generated headlessly by `Tools/blender/build_landmarks.py` from frozen survey evidence in `Data/Landmarks/sources.json`. The script writes an editable `.blend` to `Blender/Landmarks/` and an FBX to `Assets/Art/Landmarks/`. `AgentScripts/BuildLandmarks.cs` remaps their materials onto the existing Padova materials and places them at their anchors. `Assets/Art/Landmarks/Landmarks.json` tells `WorldContext` which DBT units, canal patches and ground cells the models replace. Survey versus typology, the known conflicts and the rebuild commands are in [Data/Landmarks/README.md](../Data/Landmarks/README.md).
+
+Blender UVs are metric like MeshSink, but shifted per face by whole 8.8 m periods. Absolute UVs of several hundred metres lose fragment precision on Metal and render a single texel.
+
 ## Remaining limits
 
 - Ordinary façades, roof shapes and much landmark ornament are typology, not measured elevations. Other landmarks, including Palazzo Moroni and the Gran Guardia, still have generic treatments.

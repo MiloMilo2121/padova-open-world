@@ -36,3 +36,21 @@ Poly Haven, CC0 (https://polyhaven.com/license), 2k JPG maps downloaded via api.
 Trachyte paving, sidewalk stone, portico checkerboard, shutters, lead sheeting, the Ragione banded masonry, railing and balustrade textures are generated procedurally by the same script. Landmark names/uses: OpenStreetMap contributors, ODbL 1.0 (`Data/PadovaCentro/osm/landmarks.json`).
 
 The earlier Palazzo della Ragione photographic billboard (Descouens, CC BY-SA 4.0) has been removed from the game. The photograph remains only as a drawing reference in `.context/architecture/`.
+
+## Santo and Prato della Valle landmark models (added 2026-09-29)
+
+These models use only the existing Padova materials above, plus three new ones in `Assets/Art/Landmarks/Materials`:
+- canal water and bronze, both flat colours;
+- ring balustrade, an original procedurally drawn texture.
+
+Statue and obelisk positions and names: © OpenStreetMap contributors, ODbL 1.0 (snapshot recorded in `Data/Landmarks/sources.json`). Dimensions: Wikipedia it, CC BY-SA.
+
+Wikimedia Commons photographs served as drawing references only and are neither redistributed nor textured:
+- *Basilica Di Sant'Antonio di Padova - Facciata.jpg*
+- *Basilica di Sant'Antonio di Padova - Cupole.jpg*
+- *Basilica di Sant'Antonio di Padova, August 2024.jpg*
+- *Prato della Valle - Bridges 01.jpg*
+- *Prato della Valle in Padua.JPG*
+- *Prato della Valle-Pianta Statue.jpg*
+
+Local copies are in `.context/landmarks-ref/`, outside Git.

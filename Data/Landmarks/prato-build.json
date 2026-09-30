@@ -1,0 +1,840 @@
+{
+  "name": "PratoDellaValle",
+  "anchor": [
+    202.987,
+    -3.073,
+    -1022.96
+  ],
+  "note": "Unity position = anchor (east, up, north); FBX mapped as described in Tools/blender/lmcommon.py.",
+  "objects": {
+    "Prato": {
+      "triangles": 55074,
+      "vertices": 43852
+    },
+    "Prato_Ground": {
+      "triangles": 784,
+      "vertices": 1364
+    },
+    "Prato_Water": {
+      "triangles": 265,
+      "vertices": 297
+    },
+    "Prato_Collision": {
+      "triangles": 3072,
+      "vertices": 5940
+    }
+  },
+  "boundsLocal": {
+    "Prato": [
+      [
+        -73.79,
+        -106.51,
+        -0.37
+      ],
+      [
+        74.69,
+        107.62,
+        6.7
+      ]
+    ],
+    "Prato_Ground": [
+      [
+        -77.99,
+        -127.04,
+        -1.82
+      ],
+      [
+        97.01,
+        122.96,
+        0.35
+      ]
+    ],
+    "Prato_Water": [
+      [
+        -72.68,
+        -105.77,
+        -0.62
+      ],
+      [
+        73.55,
+        106.58,
+        4.4
+      ]
+    ]
+  },
+  "replaces": {
+    "patches": [
+      "AB_CDA:265",
+      "AB_CDA:269",
+      "AB_CDA:507",
+      "AB_CDA:511",
+      "AB_CDA:512",
+      "AB_CDA:513",
+      "AB_CDA:582",
+      "AB_CDA:584"
+    ],
+    "ownGround": [
+      125,
+      -1150,
+      300,
+      -900
+    ]
+  },
+  "places": [
+    {
+      "name": "Prato della Valle",
+      "x": 202.987,
+      "z": -1022.96,
+      "source": "DBT MN_EDI_NOVOL fountain; Blender model"
+    }
+  ],
+  "statues": 78,
+  "obelisks": 8,
+  "emptyPedestals": 2,
+  "osmOutliersInterpolated": [
+    {
+      "ref": 30,
+      "osm": "node/11462353793",
+      "metres": 13.58
+    }
+  ],
+  "osmSnapMetres": {
+    "max": 2.67,
+    "mean": 1.06
+  },
+  "bridges": [
+    {
+      "id": "PONTE:414",
+      "span": 12.52,
+      "deckTop": 0.743
+    },
+    {
+      "id": "PONTE:421",
+      "span": 12.52,
+      "deckTop": 0.763
+    },
+    {
+      "id": "PONTE:422",
+      "span": 12.53,
+      "deckTop": 0.493
+    },
+    {
+      "id": "PONTE:427",
+      "span": 12.71,
+      "deckTop": 0.553
+    }
+  ],
+  "waterLevel": -3.695,
+  "groundRect": [
+    125,
+    -1150,
+    300,
+    -900
+  ],
+  "positions": [
+    {
+      "ref": 1,
+      "kind": "statue",
+      "name": "Antonio Diedo",
+      "source": "node/11462329549",
+      "x": 170.59,
+      "z": -919.22
+    },
+    {
+      "ref": 2,
+      "kind": "statue",
+      "name": "Antenore",
+      "source": "node/11462329550",
+      "x": 157.77,
+      "z": -926.29
+    },
+    {
+      "ref": 3,
+      "kind": "statue",
+      "name": "Alberto Azzo II d'Este",
+      "source": "node/11462329551",
+      "x": 148.36,
+      "z": -936.04
+    },
+    {
+      "ref": 4,
+      "kind": "statue",
+      "name": "Publio Clodio Trasea Peto",
+      "source": "node/11462329552",
+      "x": 141.63,
+      "z": -946.97
+    },
+    {
+      "ref": 5,
+      "kind": "statue",
+      "name": "Torquato Tasso",
+      "source": "node/11462329553",
+      "x": 136.38,
+      "z": -959.52
+    },
+    {
+      "ref": 6,
+      "kind": "statue",
+      "name": "Pietro d'Abano",
+      "source": "node/11462329554",
+      "x": 133.02,
+      "z": -972.26
+    },
+    {
+      "ref": 7,
+      "kind": "statue",
+      "name": "Giovanni Francesco Mussato",
+      "source": "node/11462329555",
+      "x": 130.72,
+      "z": -985.51
+    },
+    {
+      "ref": 8,
+      "kind": "statue",
+      "name": "Pagano della Torre",
+      "source": "node/11462329556",
+      "x": 129.99,
+      "z": -998.41
+    },
+    {
+      "ref": 9,
+      "kind": "statue",
+      "name": "Lucio Arunzio Stella",
+      "source": "node/11462329557",
+      "x": 130.37,
+      "z": -1011.7
+    },
+    {
+      "ref": 10,
+      "kind": "statue",
+      "name": "Opsicella",
+      "source": "node/11462329558",
+      "x": 132.08,
+      "z": -1025.28
+    },
+    {
+      "ref": 11,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462329559",
+      "x": 134.68,
+      "z": -1038.21
+    },
+    {
+      "ref": 12,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462329560",
+      "x": 136.7,
+      "z": -1046.11
+    },
+    {
+      "ref": 13,
+      "kind": "statue",
+      "name": "Bernardo Nani",
+      "source": "node/11462329561",
+      "x": 140.72,
+      "z": -1059.03
+    },
+    {
+      "ref": 14,
+      "kind": "statue",
+      "name": "Vettor Pisani",
+      "source": "node/11462329562",
+      "x": 145.81,
+      "z": -1071.23
+    },
+    {
+      "ref": 15,
+      "kind": "statue",
+      "name": "Lodovico Sambonifacio",
+      "source": "node/11462329563",
+      "x": 151.81,
+      "z": -1082.65
+    },
+    {
+      "ref": 16,
+      "kind": "statue",
+      "name": "Antonio Michiel",
+      "source": "node/11462329564",
+      "x": 159.2,
+      "z": -1093.59
+    },
+    {
+      "ref": 17,
+      "kind": "statue",
+      "name": "Antonio Barbarigo",
+      "source": "node/11462329565",
+      "x": 167.45,
+      "z": -1103.27
+    },
+    {
+      "ref": 18,
+      "kind": "statue",
+      "name": "Domenico Lazzarini",
+      "source": "node/11462329566",
+      "x": 176.73,
+      "z": -1112.39
+    },
+    {
+      "ref": 19,
+      "kind": "statue",
+      "name": "Taddeo Pepoli",
+      "source": "node/11462329567",
+      "x": 186.82,
+      "z": -1119.69
+    },
+    {
+      "ref": 20,
+      "kind": "statue",
+      "name": "Marco Mantua Benavides",
+      "source": "node/11462329568",
+      "x": 198.44,
+      "z": -1125.41
+    },
+    {
+      "ref": 21,
+      "kind": "statue",
+      "name": "Andrea Mantegna",
+      "source": "node/11462353769",
+      "x": 212.35,
+      "z": -1128.79
+    },
+    {
+      "ref": 22,
+      "kind": "statue",
+      "name": "Papa Paolo II",
+      "source": "node/11462353770",
+      "x": 224.72,
+      "z": -1128.35
+    },
+    {
+      "ref": 23,
+      "kind": "statue",
+      "name": "Papa Eugenio IV",
+      "source": "node/11462353771",
+      "x": 234.39,
+      "z": -1125.79
+    },
+    {
+      "ref": 24,
+      "kind": "statue",
+      "name": "Bernardino Trevisan",
+      "source": "node/11462353772",
+      "x": 245.82,
+      "z": -1120.32
+    },
+    {
+      "ref": 25,
+      "kind": "statue",
+      "name": "Bernardino Trevisan",
+      "source": "node/11462353773",
+      "x": 254.92,
+      "z": -1112.88
+    },
+    {
+      "ref": 26,
+      "kind": "statue",
+      "name": "Andrea di Mastro",
+      "source": "node/11462353774",
+      "x": 262.91,
+      "z": -1102.61
+    },
+    {
+      "ref": 27,
+      "kind": "statue",
+      "name": "Ludovico Ariosto",
+      "source": "node/11462353775",
+      "x": 269.4,
+      "z": -1090.19
+    },
+    {
+      "ref": 28,
+      "kind": "statue",
+      "name": "Albertino Mussato",
+      "source": "node/11462353776",
+      "x": 273.11,
+      "z": -1077.41
+    },
+    {
+      "ref": 29,
+      "kind": "statue",
+      "name": "Giuseppe Tartini",
+      "source": "node/11462353777",
+      "x": 275.69,
+      "z": -1063.82
+    },
+    {
+      "ref": 30,
+      "kind": "statue",
+      "name": "",
+      "source": "interpolated between OSM refs 29 and 31",
+      "x": 276.88,
+      "z": -1050.1
+    },
+    {
+      "ref": 31,
+      "kind": "statue",
+      "name": "Michele Morosini",
+      "source": "node/11462353779",
+      "x": 276.4,
+      "z": -1036.33
+    },
+    {
+      "ref": 32,
+      "kind": "statue",
+      "name": "Melchiorre Cesarotti",
+      "source": "node/11462353780",
+      "x": 274.82,
+      "z": -1022.94
+    },
+    {
+      "ref": 33,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462353781",
+      "x": 272.09,
+      "z": -1010.89
+    },
+    {
+      "ref": 34,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/8095101681",
+      "x": 269.71,
+      "z": -1001.72
+    },
+    {
+      "ref": 35,
+      "kind": "statue",
+      "name": "Francesco Petrarca",
+      "source": "node/8095101682",
+      "x": 265.3,
+      "z": -987.92
+    },
+    {
+      "ref": 36,
+      "kind": "statue",
+      "name": "Galileo Galilei",
+      "source": "node/8095101680",
+      "x": 260.08,
+      "z": -975.76
+    },
+    {
+      "ref": 37,
+      "kind": "statue",
+      "name": "Alessandro Orsato",
+      "source": "node/8095101679",
+      "x": 254.41,
+      "z": -964.42
+    },
+    {
+      "ref": 38,
+      "kind": "statue",
+      "name": "Alteniero degli Azzoni",
+      "source": "node/11462353782",
+      "x": 246.92,
+      "z": -952.84
+    },
+    {
+      "ref": 39,
+      "kind": "statue",
+      "name": "Sicco Polenton",
+      "source": "node/11462353783",
+      "x": 238.46,
+      "z": -942.49
+    },
+    {
+      "ref": 40,
+      "kind": "statue",
+      "name": "Antonio Zacco",
+      "source": "node/11462353784",
+      "x": 229.34,
+      "z": -933.48
+    },
+    {
+      "ref": 41,
+      "kind": "statue",
+      "name": "Cesare Piovene",
+      "source": "node/11462353785",
+      "x": 219.03,
+      "z": -925.97
+    },
+    {
+      "ref": 42,
+      "kind": "statue",
+      "name": "Maffeo Memmo",
+      "source": "node/11462353786",
+      "x": 207.34,
+      "z": -919.98
+    },
+    {
+      "ref": 43,
+      "kind": "statue",
+      "name": "Andrea Navagero",
+      "source": "node/11462353787",
+      "x": 192.33,
+      "z": -916.22
+    },
+    {
+      "ref": 44,
+      "kind": "statue",
+      "name": "Andrea Memmo",
+      "source": "node/11462353788",
+      "x": 179.58,
+      "z": -916.94
+    },
+    {
+      "ref": 45,
+      "kind": "empty pedestal",
+      "name": "",
+      "source": "interpolated between OSM refs 87 and 46",
+      "x": 173.57,
+      "z": -932.4
+    },
+    {
+      "ref": 46,
+      "kind": "statue",
+      "name": "Giambono Dotto De\u2019 Dauli",
+      "source": "node/11462353789",
+      "x": 164.27,
+      "z": -938.16
+    },
+    {
+      "ref": 47,
+      "kind": "statue",
+      "name": "Sperone Speroni",
+      "source": "node/11462353790",
+      "x": 157.12,
+      "z": -946.73
+    },
+    {
+      "ref": 48,
+      "kind": "statue",
+      "name": "Tito Livio",
+      "source": "node/11462353791",
+      "x": 151.53,
+      "z": -956.81
+    },
+    {
+      "ref": 49,
+      "kind": "statue",
+      "name": "",
+      "source": "interpolated between OSM refs 48 and 51",
+      "x": 147.97,
+      "z": -967.23
+    },
+    {
+      "ref": 50,
+      "kind": "statue",
+      "name": "",
+      "source": "interpolated between OSM refs 48 and 51",
+      "x": 145.32,
+      "z": -977.93
+    },
+    {
+      "ref": 51,
+      "kind": "statue",
+      "name": "Lodovico Buzzacarini",
+      "source": "node/11462353794",
+      "x": 143.61,
+      "z": -988.83
+    },
+    {
+      "ref": 52,
+      "kind": "statue",
+      "name": "Giovanni Poleni",
+      "source": "node/11462353795",
+      "x": 143.22,
+      "z": -1000.49
+    },
+    {
+      "ref": 53,
+      "kind": "statue",
+      "name": "Guglielmo Malaspina degli Obizzi",
+      "source": "node/11462353796",
+      "x": 143.67,
+      "z": -1011.81
+    },
+    {
+      "ref": 54,
+      "kind": "statue",
+      "name": "Giovanni Dondi dell'Orologio",
+      "source": "node/11462353797",
+      "x": 144.86,
+      "z": -1021.53
+    },
+    {
+      "ref": 55,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462353798",
+      "x": 147.18,
+      "z": -1033.73
+    },
+    {
+      "ref": 56,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462353799",
+      "x": 149.58,
+      "z": -1043.12
+    },
+    {
+      "ref": 57,
+      "kind": "statue",
+      "name": "Antonio Schinella de\u2019 Conti",
+      "source": "node/11462353800",
+      "x": 152.44,
+      "z": -1052.42
+    },
+    {
+      "ref": 58,
+      "kind": "statue",
+      "name": "Jacopino de' Rossi",
+      "source": "node/11462353801",
+      "x": 156.47,
+      "z": -1062.66
+    },
+    {
+      "ref": 59,
+      "kind": "statue",
+      "name": "Gustavo Adamo Ban\u00e9r",
+      "source": "node/11462353802",
+      "x": 161.54,
+      "z": -1072.81
+    },
+    {
+      "ref": 60,
+      "kind": "statue",
+      "name": "Gustavo II Adolfo di Svezia",
+      "source": "node/11462353803",
+      "x": 167.54,
+      "z": -1082.71
+    },
+    {
+      "ref": 61,
+      "kind": "statue",
+      "name": "Matteo da Ragnina",
+      "source": "node/11462353804",
+      "x": 174.26,
+      "z": -1090.95
+    },
+    {
+      "ref": 62,
+      "kind": "statue",
+      "name": "Giobbe Ludolf di Erfurt",
+      "source": "node/11462353805",
+      "x": 181.88,
+      "z": -1099.32
+    },
+    {
+      "ref": 63,
+      "kind": "statue",
+      "name": "Stefano Gallini",
+      "source": "node/11462353806",
+      "x": 190.99,
+      "z": -1106.61
+    },
+    {
+      "ref": 64,
+      "kind": "statue",
+      "name": "Filippo Salviati",
+      "source": "node/11462353807",
+      "x": 200.87,
+      "z": -1112.25
+    },
+    {
+      "ref": 65,
+      "kind": "statue",
+      "name": "Oberto II Pallavicino",
+      "source": "node/11462353808",
+      "x": 211.33,
+      "z": -1115.23
+    },
+    {
+      "ref": 66,
+      "kind": "statue",
+      "name": "Papa Alessandro VIII",
+      "source": "node/11462353809",
+      "x": 220.94,
+      "z": -1115.66
+    },
+    {
+      "ref": 67,
+      "kind": "statue",
+      "name": "Papa Clemente XIII",
+      "source": "node/11462353810",
+      "x": 230.87,
+      "z": -1113.04
+    },
+    {
+      "ref": 68,
+      "kind": "statue",
+      "name": "Antonio Canova",
+      "source": "node/11462353811",
+      "x": 241.32,
+      "z": -1107.27
+    },
+    {
+      "ref": 69,
+      "kind": "statue",
+      "name": "Francesco Luigi Fanzago",
+      "source": "node/11462353812",
+      "x": 248.59,
+      "z": -1099.86
+    },
+    {
+      "ref": 70,
+      "kind": "statue",
+      "name": "Francesco Pisani",
+      "source": "node/11462353813",
+      "x": 254.55,
+      "z": -1090.57
+    },
+    {
+      "ref": 71,
+      "kind": "statue",
+      "name": "Giulio Pontedera",
+      "source": "node/11462353814",
+      "x": 258.7,
+      "z": -1080.22
+    },
+    {
+      "ref": 72,
+      "kind": "statue",
+      "name": "Nicol\u00f2 Tron",
+      "source": "node/11462353815",
+      "x": 261.16,
+      "z": -1070.14
+    },
+    {
+      "ref": 73,
+      "kind": "statue",
+      "name": "Francesco Guicciardini",
+      "source": "node/11462353816",
+      "x": 263.09,
+      "z": -1058.71
+    },
+    {
+      "ref": 74,
+      "kind": "statue",
+      "name": "Giacomo Menochio",
+      "source": "node/11462353817",
+      "x": 263.65,
+      "z": -1047.34
+    },
+    {
+      "ref": 75,
+      "kind": "statue",
+      "name": "Giovanni III Sobieski",
+      "source": "node/11462353818",
+      "x": 262.99,
+      "z": -1035.37
+    },
+    {
+      "ref": 76,
+      "kind": "statue",
+      "name": "Stefano I B\u00e1thory",
+      "source": "node/11462353819",
+      "x": 261.59,
+      "z": -1024.14
+    },
+    {
+      "ref": 77,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462353820",
+      "x": 259.3,
+      "z": -1014.23
+    },
+    {
+      "ref": 78,
+      "kind": "obelisk",
+      "name": "Obelisco",
+      "source": "node/11462353821",
+      "x": 256.91,
+      "z": -1005.02
+    },
+    {
+      "ref": 79,
+      "kind": "statue",
+      "name": "Pietro Danieletti",
+      "source": "node/11462353822",
+      "x": 253.05,
+      "z": -992.92
+    },
+    {
+      "ref": 80,
+      "kind": "statue",
+      "name": "Rainiero Vasco",
+      "source": "node/11462353823",
+      "x": 248.77,
+      "z": -982.71
+    },
+    {
+      "ref": 81,
+      "kind": "statue",
+      "name": "Francesco Morosini",
+      "source": "node/11462353824",
+      "x": 243.87,
+      "z": -972.74
+    },
+    {
+      "ref": 82,
+      "kind": "statue",
+      "name": "Gerolamo Liorsi",
+      "source": "node/11462353825",
+      "x": 238.1,
+      "z": -963.12
+    },
+    {
+      "ref": 83,
+      "kind": "statue",
+      "name": "Antonio Savonarola",
+      "source": "node/11462353826",
+      "x": 231.5,
+      "z": -954.79
+    },
+    {
+      "ref": 84,
+      "kind": "statue",
+      "name": "Marino Cavalli",
+      "source": "node/11462353827",
+      "x": 223.6,
+      "z": -946.15
+    },
+    {
+      "ref": 85,
+      "kind": "statue",
+      "name": "Andrea Briosco",
+      "source": "node/11462353828",
+      "x": 215.41,
+      "z": -939.49
+    },
+    {
+      "ref": 86,
+      "kind": "statue",
+      "name": "Albertino Papafava",
+      "source": "node/11462353829",
+      "x": 206.11,
+      "z": -934.01
+    },
+    {
+      "ref": 87,
+      "kind": "statue",
+      "name": "Michele Savonarola",
+      "source": "node/11462353830",
+      "x": 195.19,
+      "z": -929.97
+    },
+    {
+      "ref": 88,
+      "kind": "empty pedestal",
+      "name": "",
+      "source": "interpolated between OSM refs 87 and 46",
+      "x": 184.23,
+      "z": -929.59
+    }
+  ]
+}

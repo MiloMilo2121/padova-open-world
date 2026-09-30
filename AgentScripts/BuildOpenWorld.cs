@@ -47,7 +47,7 @@ public static class BuildOpenWorld
         Import("Data/World/WorldPlan.json",Folder+"/WorldPlan.json");Import("Data/World/Map.png",Folder+"/Map.png");
         var ti=(TextureImporter)AssetImporter.GetAtPath(Folder+"/Map.png");ti.textureCompression=TextureImporterCompression.Uncompressed;ti.maxTextureSize=4096;ti.mipmapEnabled=false;ti.wrapMode=TextureWrapMode.Clamp;ti.SaveAndReimport();
         var city=UnityEngine.Object.FindFirstObjectByType<PadovaCity>();city.IncludeHorizon=false;city.Build();
-        var world=new GameObject("Wider Padova").AddComponent<WorldContext>();world.City=city;world.Plan=AssetDatabase.LoadAssetAtPath<TextAsset>(Folder+"/WorldPlan.json");world.Build();
+        var world=new GameObject("Wider Padova").AddComponent<WorldContext>();world.City=city;world.Plan=AssetDatabase.LoadAssetAtPath<TextAsset>(Folder+"/WorldPlan.json");world.Landmarks=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Art/Landmarks/Landmarks.json");world.Build();
         var streets=new GameObject("Street life").AddComponent<Streetscape>();streets.City=city;streets.Build();
         var root=new GameObject("Open world");var game=root.AddComponent<OpenWorld>();game.Player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonMotor>();game.City=world;game.MapTexture=AssetDatabase.LoadAssetAtPath<Texture2D>(Folder+"/Map.png");
         game.Player.WorldHalfSize=new Vector2(1400,1200);

@@ -1,0 +1,91 @@
+{
+  "name": "Santo",
+  "anchor": [
+    527.668,
+    -1.3,
+    -679.014
+  ],
+  "note": "Unity position = anchor (east, up, north); FBX mapped as described in Tools/blender/lmcommon.py.",
+  "objects": {
+    "Santo": {
+      "triangles": 106945,
+      "vertices": 168867
+    },
+    "Gattamelata": {
+      "triangles": 813,
+      "vertices": 957
+    },
+    "Santo_Collision": {
+      "triangles": 3075,
+      "vertices": 7135
+    }
+  },
+  "boundsLocal": {
+    "Santo": [
+      [
+        -50.58,
+        -32.43,
+        -0.47
+      ],
+      [
+        68.04,
+        44.83,
+        67.99
+      ]
+    ],
+    "Gattamelata": [
+      [
+        -33.54,
+        8.49,
+        -0.19
+      ],
+      [
+        -27.28,
+        13.67,
+        11.27
+      ]
+    ]
+  },
+  "replaces": {
+    "units": [
+      "UN_VOL:30694",
+      "UN_VOL:30788",
+      "UN_VOL:30877",
+      "UN_VOL:30982",
+      "UN_VOL:30785",
+      "UN_VOL:33179",
+      "UN_VOL:30521",
+      "UN_VOL:23920",
+      "UN_VOL:31103",
+      "UN_VOL:30619",
+      "UN_VOL:26182",
+      "UN_VOL:30736",
+      "UN_VOL:30849",
+      "UN_VOL:23960",
+      "UN_VOL:30759",
+      "UN_VOL:25375",
+      "UN_VOL:24007",
+      "UN_VOL:30830",
+      "UN_VOL:30659",
+      "UN_VOL:23928",
+      "UN_VOL:26860",
+      "UN_VOL:85827",
+      "UN_VOL:85828",
+      "UN_VOL:85829",
+      "UN_VOL:85830",
+      "UN_VOL:85831",
+      "UN_VOL:85832",
+      "UN_VOL:30718",
+      "UN_VOL:19872",
+      "UN_VOL:30045"
+    ]
+  },
+  "places": [
+    {
+      "name": "Basilica di Sant'Antonio",
+      "x": 473.58,
+      "z": -696.97,
+      "source": "Piazza del Santo, 12 m in front of the DBT facade (UN_VOL:30788)"
+    }
+  ]
+}

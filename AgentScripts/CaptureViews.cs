@@ -19,6 +19,13 @@ public static class CaptureViews
         ("duomo", new Vector3(-145, 28, -60), new Vector3(-244, 24, -141)),
         ("bo-courtyard", new Vector3(229, 2.5f, -78), new Vector3(237, 9, -72)),
         ("expanded-city", new Vector3(450, 240, 480), new Vector3(0, 5, 0)),
+        ("santo-piazza", new Vector3(412, 0.4f, -716), new Vector3(500, 17, -683)),
+        ("santo-portal", new Vector3(468, 0.6f, -700), new Vector3(486, 4, -694)),
+        ("santo-aerial", new Vector3(380, 115, -860), new Vector3(530, 15, -680)),
+        ("santo-apse", new Vector3(640, 30, -600), new Vector3(540, 25, -675)),
+        ("prato-canal", new Vector3(140.5f, -0.4f, -1037.5f), new Vector3(168, -2.5f, -985)),
+        ("prato-aerial", new Vector3(30, 130, -1240), new Vector3(203, -3, -1023)),
+        ("prato-santo", new Vector3(60, 250, -1330), new Vector3(380, 0, -840)),
     };
 
     public static object Capture(string outDir, string only = "")
